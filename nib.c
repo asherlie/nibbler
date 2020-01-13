@@ -46,6 +46,7 @@ void* dl_page_pth(void* dla_v){
 
 struct web_page* dl_pages(char** urls, int npages){
       struct web_page* ret = malloc(sizeof(struct web_page)*npages);
+      /* TODO: put on heap to accomodate very large npages */
       struct dl_arg dla[npages];
       pthread_t pth[npages];
       for(int i = 0; i < npages; ++i){
@@ -61,23 +62,13 @@ struct web_page* dl_pages(char** urls, int npages){
 
 int main(){
       curl_global_init(CURL_GLOBAL_ALL);
-      char* urls[2] = {"https://www.example.com", "https://www.google.com"};
-      struct web_page* w = dl_pages(urls, 2);
+      char* urls[] = {"https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
+                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com"};
+      struct web_page* w = dl_pages(urls, 3*7);
       curl_global_cleanup();
 }
-
-#if 0
-our function that returns many web_page objects will
-spawn many threads that all write to different sections
-of the same buffer
-struct web_page pages[nurls];
-char* urls[nurls] = {"", ""};
-for(int i = 0; i < nurls; ++i){
-      // get_page(mem, url) spawns a pthread
-      // that writes a struct mem_page to mem
-      get_page(pages+i, urls[i])
-}
-for(int i = 0; i < nurls; ++i){
-      pthread_join(...)
-}
-#endif
