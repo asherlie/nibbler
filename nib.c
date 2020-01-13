@@ -11,7 +11,7 @@ struct web_page{
 
 struct dl_arg{
       char* url;
-      /* dl_page() writes to here */
+      /* dl_page_pth() writes to here */
       struct web_page* page;
 };
 
@@ -26,7 +26,7 @@ static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
       return _sz;
 }
 
-void* dl_page(void* dla_v){
+void* dl_page_pth(void* dla_v){
       struct dl_arg* dla = (struct dl_arg*)dla_v;
       CURL* c = curl_easy_init();
       curl_easy_setopt(c, CURLOPT_URL, dla->url);
@@ -43,13 +43,21 @@ void* dl_page(void* dla_v){
       return NULL;
 }
 
+struct web_page* dl_pages(char** urls, int npages){
+      struct web_page* ret = malloc(sizeof(struct web_page)*npages);
+      struct dl_arg dla[npages];
+      for(int i = 0; i < npages; ++i){
+      }
+      return ret;
+}
+
 int main(){
       curl_global_init(CURL_GLOBAL_ALL);
       pthread_t pth;
       struct web_page page;
       struct dl_arg dla;
       dla.page = &page;
-      pthread_create(&pth, NULL, dl_page, (void*)&dla);
+      pthread_create(&pth, NULL, dl_page_pth, (void*)&dla);
       pthread_join(pth, NULL);
       printf("read %lu b\n", dla.page->bytes);
       puts(dla.page->data);
