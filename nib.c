@@ -36,7 +36,8 @@ void* dl_page_pth(void* dla_v){
 
       CURLcode ret = curl_easy_perform(c);
       if(ret != CURLE_OK){
-            puts("UHOH");
+            dla->page->data = NULL;
+            dla->page->bytes = 0;
             /* TODO: handle this */
             return NULL;
       }
@@ -46,7 +47,11 @@ void* dl_page_pth(void* dla_v){
 struct web_page* dl_pages(char** urls, int npages){
       struct web_page* ret = malloc(sizeof(struct web_page)*npages);
       struct dl_arg dla[npages];
+      pthread_t pth[npages];
       for(int i = 0; i < npages; ++i){
+            dla[i].url = urls[i];
+            dla[i].page = ret+i;
+            pthread_create(pth+i, NULL, dl_page_pth, (void*)dla+i);
       }
       return ret;
 }
