@@ -15,25 +15,28 @@ int read_bytes(char* host_addr, char* url){
             return -1;
       }
 
-      struct sockaddr_in addr = {0};
-      addr.sin_family = AF_INET;
-      memcpy(host->h_addr, &addr.sin_addr.s_addr, host->h_length);
-      addr.sin_port = htons(80);
+      struct sockaddr_in addr = {.sin_family = AF_INET, .sin_port = htons(80)};
+      memcpy(&addr.sin_addr.s_addr, host->h_addr, host->h_length);
 
       if(connect(sock, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) == -1){
             perror("connect");
             return -1;
       }
-      char req[500] = {0}, buf[5000];
+      char req[500] = {0}, buf[5000] = {0};
       sprintf(req, "GET / HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n", url);
       /* TODO: don't rely on strlen(), param can be url_len and we can add that
        * to the constant len of the request
        */
       write(sock, req, strlen(req));
-      int b_read = read(sock, buf, 5000);
+      int nb, b_read = 0;
+      while((nb = read(sock, buf, 4999)))
+            b_read += nb;
+      close(sock);
+      puts(buf);
       return b_read;
 }
 
 int main(){
-      return read_bytes(NULL, NULL);
+      printf("read %i bytes\n", read_bytes("example.com", "example.com"));
+      return 0;
 }
