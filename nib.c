@@ -51,7 +51,7 @@ struct web_page* dl_pages(char** urls, int npages){
       for(int i = 0; i < npages; ++i){
             dla[i].url = urls[i];
             dla[i].page = ret+i;
-            pthread_create(pth+i, NULL, dl_page_pth, (void*)dla+i);
+            pthread_create(pth+i, NULL, dl_page_pth, (void*)(dla+i));
       }
 
       for(int i = 0; i < npages; ++i)
@@ -61,17 +61,7 @@ struct web_page* dl_pages(char** urls, int npages){
 
 int main(){
       curl_global_init(CURL_GLOBAL_ALL);
-      /*
-       *pthread_t pth;
-       *struct web_page page;
-       *struct dl_arg dla;
-       *dla.page = &page;
-       *pthread_create(&pth, NULL, dl_page_pth, (void*)&dla);
-       *pthread_join(pth, NULL);
-       *printf("read %lu b\n", dla.page->bytes);
-       *puts(dla.page->data);
-       */
-      char* urls[2] = {"https://www.example.com, https://www.google.com"};
+      char* urls[2] = {"https://www.example.com", "https://www.google.com"};
       struct web_page* w = dl_pages(urls, 2);
       curl_global_cleanup();
 }
