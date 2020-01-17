@@ -5,7 +5,7 @@
 #include <curl/curl.h>
 
 #include "dl.h"
-#include "tagger.h"
+/*#include "tagger.h"*/
 
 static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
       size_t _sz = sz*mems;

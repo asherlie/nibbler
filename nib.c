@@ -1,5 +1,7 @@
 #include <curl/curl.h>
 
+#include "strhash.h"
+/*#include "tagger.h"*/
 #include "dl.h"
 
 /* TODO:
@@ -27,5 +29,8 @@ int main(int a, char** b){
             printf("%li bytes\n", w[i].bytes);
             printf("%s\n", w[i].data);
       }
+      struct shash h;
+      init_shash(&h);
+      tag_page(&h, w);
       curl_global_cleanup();
 }
