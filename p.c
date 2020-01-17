@@ -4,17 +4,6 @@
 
 #include "strhash.h"
 
-struct page{
-      // hash into this 
-      struct tag* tags;
-};
-
-struct tag{
-      char type[20];
-      char* raw_text;
-      struct tag* sub;
-};
-
 int main(){
       FILE* fp = fopen("ex", "r");
       int in_tag = 0;
@@ -35,8 +24,11 @@ int main(){
       struct shash h;
       init_shash(&h);
 
+      /* TODO: insert contents of tags in strhash */
       char str[2000] = {0};
-      int ind = 0, taglen = 0;
+      (void)str;
+
+      int ind = 0;
       char tag[100];
 
       /* int depth refers to current depth in tags */
