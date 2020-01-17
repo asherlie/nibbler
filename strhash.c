@@ -1,27 +1,103 @@
-#include "strhash.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "strhash.h"
 
 void init_shash(struct shash* h){
       h->nbux = 251;
       h->entries = calloc(h->nbux, sizeof(struct sh_entry));
 }
 
+_Bool streq(char* x, char* y){
+      return !strcmp(x, y);
+      int i = 0;
+      while(1){
+            if(!x[i] && !y[i])return 1;
+            if(!x[i] || !y[i])return 0;
+            if(x[i] != y[i++])return 0;
+      }
+      return 1;
+}
+
 /*void insert_shash(struct shash* h, char* tag){*/
-void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* tag){
+void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
+
+/*
+ * this whole function needs to be broken up
+ * there should be an abstract function that just inserts an item into hash
+ * this will call that often recurseivly or some shit
+*/
       
       int ind;
+      _Bool eq;
+
+      char** _cur_path = cur_path;
+      int _cur_depth = cur_depth;
 
       struct shash* sub_h = h;
-      for(int i = 0; i < cur_depth; ++i){
-            ind = *tag%h->nbux; 
+      for(int i = 0; i < _cur_depth; ++i){
+            ind = (*_cur_path[i])%h->nbux; 
 
+            printf("checking if bucket \"%s\" exists in h: ", _cur_path[i]);
+            for(int x = 0; x < i; ++x){
+                  printf("%s/", _cur_path[x]);
+            }
+            printf("\\...");
             if(!sub_h->entries[ind]){
+                  puts("doesn't");
+                  /*printf("inserted bucket %s\n", cur_path[i]);*/
                   sub_h->entries[ind] = calloc(1, sizeof(struct sh_entry));
                   sub_h->entries[ind]->subhash = calloc(1, sizeof(struct shash));
                   init_shash(sub_h->entries[ind]->subhash);
+
+                  /* if we've just initialized bucket, insert and get out */
+                  memcpy(sub_h->entries[ind]->tag, _cur_path[i], 100);
+                  sub_h = sub_h->entries[ind]->subhash;
+
+                  --_cur_depth;
+                  ++_cur_path;
+                  continue;
             }
-            sub_h = sub_h->entries[ind]->subhash;
+            else puts("DOES");
+
+            /* otherwise, we still need to find the last index of linked list */
+            /* TODO: keep a last pointer */
+            /*each bucket has a linked list*/
+            struct sh_entry* e = sub_h->entries[ind];
+
+            /* recurse */
+            /*sub_h = sub_h->entries[ind]->subhash;*/
+
+            /* e is initialized to NULL with calloc */
+            /*if(!e->)*/
+
+            for(; e->next; e = e->next);
+                  if(streq(cur_path[i], e->tag)){
+                  /* if cur_path[i] is already in current tag, increment sub_h, continue */
+                        /*sub_h = e->next->subhash;*/
+                        sub_h = e->subhash;
+                        continue;
+                         /*break;*/
+                   }
+            e->next = calloc(1, sizeof(struct sh_entry));
+            e->next->subhash = calloc(1, sizeof(struct shash));
+            init_shash(e->next->subhash);
+            memcpy(e->next->tag, _cur_path[i], 100);
+
+            sub_h = e->next->subhash;
+            /*printf("found %p->%p\n", (void*)e, (void*)e->next);*/
+            /*
+             * if(!eq){
+             *       e->next = calloc(sizeof(gt));
+             * }
+            */
+
       }
+      /* TODO: insert data somewhere in this final hash */
+      /*sub_h->*/
+      
+      /* tag will be implicitly added at this point */
 
       /* at this point, sub_h will point to the appropriate shash* */
       /* might as well just use 255 indices for chars */
