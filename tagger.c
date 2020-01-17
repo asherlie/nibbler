@@ -34,7 +34,7 @@ void tag_page(struct shash* h, struct web_page* w){
       for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, 100);
 
       while(str_off < strlen){
-            c = raw_page[str_off];
+            c = raw_page[str_off++];
       /*while((c = fgetc(fp)) != EOF){*/
             if(c == '<'){
                   ind = 0;
