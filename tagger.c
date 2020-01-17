@@ -8,18 +8,6 @@ int main(){
       FILE* fp = fopen("ex", "r");
       int in_tag = 0;
       char c;
-      #if 0
-      we will add everything until the close of a tag
-      to that tags content as a string
-
-      top level string -> tag containing string
-      then we process tag containing string 
-
-      keep track of in_tag value when beginnig insertion
-      when in_tag starts to decrease again
-
-      each tag found is added to consectuve sh_entries
-      #endif
 
       struct shash h;
       init_shash(&h);
@@ -42,7 +30,7 @@ int main(){
             if(c == '<'){
                   ind = 0;
                   memset(tag, 0, 100);
-            /*from here each tag that's found is added recursively*/
+
                   ++in_tag;
                   while((c = fgetc(fp)) != '>'){
                   /*while((c = fgetc(fp)) != '/'){*/
@@ -69,5 +57,4 @@ int main(){
             }
       }
       printf("%i\n", in_tag);
-      /*here*/
 }
