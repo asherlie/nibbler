@@ -4,6 +4,8 @@
 #include <string.h>
 #include <curl/curl.h>
 
+#include "tagger.h"
+
 struct web_page{
       char* data;
       size_t bytes;

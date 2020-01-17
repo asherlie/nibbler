@@ -2,21 +2,25 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "strhash.h"
+#include "tagger.h"
 
-int main(){
-      FILE* fp = fopen("ex", "r");
+void tag_page(struct shash* h, char* raw_page, int strlen){
+      /*
+       * FILE* fp = fopen("ex", "r");
+      */
       int in_tag = 0;
       char c;
 
-      struct shash h;
-      init_shash(&h);
+      /*
+       * struct shash h;
+       * init_shash(&h);
+      */
 
       /* TODO: insert contents of tags in strhash */
       char str[2000] = {0};
       (void)str;
 
-      int ind = 0;
+      int ind = 0, str_off = 0;
       char tag[100];
 
       /* int depth refers to current depth in tags */
@@ -26,14 +30,17 @@ int main(){
       char** cur_path = malloc(sizeof(char*)*500);
       for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, 100);
 
-      while((c = fgetc(fp)) != EOF){
+      while(str_off < strlen){
+            c = raw_page[str_off];
+      /*while((c = fgetc(fp)) != EOF){*/
             if(c == '<'){
                   ind = 0;
                   memset(tag, 0, 100);
 
                   ++in_tag;
-                  while((c = fgetc(fp)) != '>'){
-                  /*while((c = fgetc(fp)) != '/'){*/
+                  /*while((c = fgetc(fp)) != '>'){*/
+                  while((c = raw_page[str_off++]) != '>'){
+                  /*while((c = fgetc(fp)) != '>'){*/
                         tag[ind++] = c;
                   }
                   /* self contained tags get inserted as a final step */
@@ -48,7 +55,7 @@ int main(){
                   */
 
                   /* tag is memcpy'd, no need to throw on heap */
-                  insert_shash(&h, cur_path, depth, "some data");
+                  insert_shash(h, cur_path, depth, "some data");
                   /*printf("%i: tag in prog: %s\n", in_tag, tag);*/
             }
             if(c == '>'){
