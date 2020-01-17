@@ -11,13 +11,6 @@ void init_shash(struct shash* h){
 
 _Bool streq(char* x, char* y){
       return !strcmp(x, y);
-      int i = 0;
-      while(1){
-            if(!x[i] && !y[i])return 1;
-            if(!x[i] || !y[i])return 0;
-            if(x[i] != y[i++])return 0;
-      }
-      return 1;
 }
 
 /*void insert_shash(struct shash* h, char* tag){*/
