@@ -82,7 +82,7 @@ int main(int a, char** b){
       #endif                
       struct web_page* w = dl_pages(b+1, a-1);
       for(int i = 0; i < a-1; ++i){
-            printf("%i bytes\n", w[i].bytes);
+            printf("%li bytes\n", w[i].bytes);
             printf("%s\n", w[i].data);
       }
       curl_global_cleanup();

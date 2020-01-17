@@ -15,6 +15,8 @@ _Bool streq(char* x, char* y){
 
 /*void insert_shash(struct shash* h, char* tag){*/
 void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
+      /* TODO: insert data */
+      (void)data;
 
 /*
  * this whole function needs to be broken up
@@ -23,7 +25,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
 */
       
       int ind;
-      _Bool eq;
+      /*_Bool eq;*/
 
       char** _cur_path = cur_path;
       int _cur_depth = cur_depth;
@@ -68,7 +70,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
             /* e is initialized to NULL with calloc */
             /*if(!e->)*/
 
-            for(; e->next; e = e->next);
+            for(; e->next; e = e->next){
                   if(streq(cur_path[i], e->tag)){
                   /* if cur_path[i] is already in current tag, increment sub_h, continue */
                         /*sub_h = e->next->subhash;*/
@@ -76,6 +78,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
                         continue;
                          /*break;*/
                    }
+            }
             e->next = calloc(1, sizeof(struct sh_entry));
             e->next->subhash = calloc(1, sizeof(struct shash));
             init_shash(e->next->subhash);
