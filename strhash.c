@@ -39,13 +39,16 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
       for(int i = 0; i < _cur_depth; ++i){
             ind = (*_cur_path[i])%h->nbux; 
 
-            printf("checking if bucket \"%s\" exists in h: ", _cur_path[i]);
-            for(int x = 0; x < i; ++x){
-                  printf("%s/", _cur_path[x]);
-            }
-            printf("\\...");
+            /*printf("hashing %c, checking mod %i\n", *_cur_path[i], ind);*/
+            /*
+             * printf("checking if bucket \"%s\" exists in h: ", _cur_path[i]);
+             * for(int x = 0; x < i; ++x){
+             *       printf("%s/", _cur_path[x]);
+             * }
+             * printf("\\...");
+            */
             if(!sub_h->entries[ind]){
-                  puts("doesn't");
+                  /*puts("doesn't");*/
                   /*printf("inserted bucket %s\n", cur_path[i]);*/
                   sub_h->entries[ind] = calloc(1, sizeof(struct sh_entry));
                   sub_h->entries[ind]->subhash = calloc(1, sizeof(struct shash));
@@ -59,7 +62,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
                   ++_cur_path;
                   continue;
             }
-            else puts("DOES");
+            /*else puts("DOES");*/
 
             /* otherwise, we still need to find the last index of linked list */
             /* TODO: keep a last pointer */
