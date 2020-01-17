@@ -4,10 +4,10 @@ CFLAGS=  -Wall -Wextra -Wpedantic -Werror -O3 -lpthread -lcurl
 all: nib
 
 strhash.o: strhash.c strhash.h
-tagger.o: tagger.c tagger.h strhash.o
-#nib: nib.c strhash.o
 dl.o: dl.c dl.h
-nib: nib.c dl.o
+tagger.o: tagger.c tagger.h dl.o strhash.o
+#nib: nib.c strhash.o
+nib: nib.c strhash.o dl.o tagger.o
 
 .PHONY:
 clean:

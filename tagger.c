@@ -4,7 +4,9 @@
 
 #include "tagger.h"
 
-void tag_page(struct shash* h, char* raw_page, int strlen){
+void tag_page(struct shash* h, struct web_page* w){
+      char* raw_page = w->data;
+      size_t strlen = w->bytes;
       /*
        * FILE* fp = fopen("ex", "r");
       */
@@ -20,7 +22,8 @@ void tag_page(struct shash* h, char* raw_page, int strlen){
       char str[2000] = {0};
       (void)str;
 
-      int ind = 0, str_off = 0;
+      int ind = 0;
+      size_t str_off = 0;
       char tag[100];
 
       /* int depth refers to current depth in tags */
