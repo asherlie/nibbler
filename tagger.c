@@ -67,5 +67,5 @@ void tag_page(struct shash* h, struct web_page* w){
                   --in_tag;
             }
       }
-      printf("%i\n", in_tag);
+      /*printf("%i\n", in_tag);*/
 }

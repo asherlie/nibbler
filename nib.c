@@ -19,7 +19,7 @@ int main(int a, char** b){
       tag_page(&h, w);
 
       if(a < 3)return 0;
-      struct shash* found = ind_shash(&h, b+2, 1);
+      struct shash* found = ind_shash(&h, b+2, a-2);
       if(!found)puts("didn't find");
       else puts("found");
 
