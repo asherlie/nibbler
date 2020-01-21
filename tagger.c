@@ -37,6 +37,7 @@ void tag_page(struct shash* h, struct web_page* w){
             c = raw_page[str_off++];
       /*while((c = fgetc(fp)) != EOF){*/
             if(c == '<'){
+                  if(raw_page[str_off] == '!')continue;
                   ind = 0;
                   memset(tag, 0, 100);
 

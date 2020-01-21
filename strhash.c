@@ -75,10 +75,17 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
                   /* if cur_path[i] is already in current tag, increment sub_h, continue */
                         /*sub_h = e->next->subhash;*/
                         sub_h = e->subhash;
-                        continue;
-                         /*break;*/
+                        /*continue;*/
+                        break;
                    }
             }
+            /* is this only true if we've found tag?
+             * otherwise we can just set a flag if streq()
+             * and replace this condition
+             */
+            if(sub_h == e->subhash)continue;
+
+            /* this shouldn't be reached if we've found a bucket */
             e->next = calloc(1, sizeof(struct sh_entry));
             e->next->subhash = calloc(1, sizeof(struct shash));
             init_shash(e->next->subhash);
