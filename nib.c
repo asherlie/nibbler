@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <curl/curl.h>
 
 #include "strhash.h"
@@ -10,27 +11,19 @@
 int main(int a, char** b){
       if(a < 2)return 1;
       curl_global_init(CURL_GLOBAL_ALL);
-      #if 0
-      char* urls[] = {"https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com",
-                      "https://www.example.com", "https://www.google.com", "https://www.reddit.com"};
-      #endif                
-      struct web_page* w = dl_pages(b+1, a-1);
-      for(int i = 0; i < a-1; ++i){
-            printf("%li bytes\n", w[i].bytes);
-            printf("%s\n", w[i].data);
-      }
+      struct web_page* w = dl_pages(b+1, 1);
       struct shash h;
       init_shash(&h);
+
+      /* TODO: tagging of multiple pages should be done in parallel */
       tag_page(&h, w);
+
+      if(a < 3)return 0;
+      struct shash* found = ind_shash(&h, b+2, 1);
+      if(!found)puts("didn't find");
+      else puts("found");
+
       curl_global_cleanup();
+
+      return 0;
 }
