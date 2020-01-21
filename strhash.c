@@ -55,6 +55,8 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
 
                   --_cur_depth;
                   ++_cur_path;
+                  --i;
+                  /*if(i == _cur_depth)return;*/
                   continue;
             }
             /*else puts("DOES");*/

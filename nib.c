@@ -16,7 +16,10 @@ int main(int a, char** b){
       init_shash(&h);
 
       /* TODO: tagging of multiple pages should be done in parallel */
-      tag_page(&h, w);
+      if(!tag_page(&h, w)){
+            puts("malformed page");
+            return EXIT_FAILURE;
+      }
 
       if(a < 3)return 0;
       struct shash* found = ind_shash(&h, b+2, a-2);
