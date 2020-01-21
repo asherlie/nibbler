@@ -4,7 +4,7 @@
 
 #include "tagger.h"
 
-void tag_page(struct shash* h, struct web_page* w){
+_Bool tag_page(struct shash* h, struct web_page* w){
       char* raw_page = w->data;
       size_t strlen = w->bytes;
       /*
@@ -48,10 +48,10 @@ void tag_page(struct shash* h, struct web_page* w){
                         tag[ind++] = c;
                   }
                   /* self contained tags get inserted as a final step */
-                  if(tag[ind-1] == '/'){
+                  if(*tag != '/')memcpy(cur_path[depth++], tag, ind);
+                  else{
+                        if(--depth < 0)return 0;
                   }
-                  if(*tag != '/')memcpy(cur_path[depth++], tag, 100);
-                  else --depth;
 
                   /*
                    * printf("\ndepth: %i\n", depth);
@@ -67,5 +67,6 @@ void tag_page(struct shash* h, struct web_page* w){
                   --in_tag;
             }
       }
+      return 1;
       /*printf("%i\n", in_tag);*/
 }

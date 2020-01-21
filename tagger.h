@@ -5,5 +5,6 @@
 #include "strhash.h"
 struct web_page;
 
-void tag_page(struct shash* h, struct web_page* w);
+/* returns 1 on success */
+_Bool tag_page(struct shash* h, struct web_page* w);
 #endif
