@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=  -Wall -Wextra -Wpedantic -Werror -O3 -lpthread -lcurl
-#CFLAGS=  -Wall -Wextra -Wpedantic -Werror -g -lpthread -lcurl
+#CFLAGS=  -Wall -Wextra -Wpedantic -Werror -O3 -lpthread -lcurl
+CFLAGS=  -Wall -Wextra -Wpedantic -Werror -g -lpthread -lcurl
 
 all: nib
 
