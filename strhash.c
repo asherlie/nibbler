@@ -150,7 +150,7 @@ struct shash* ind_shash(struct shash* h, char** path, int depth){
             struct sh_entry* e;
             found = 0;
             for(e = hh->entries[ind]; e; e = e->next){
-                  printf("comparing %s and %s\n", path[i], e->tag);
+                  /*printf("comparing %s and %s\n", path[i], e->tag);*/
                   if(streq(e->tag, path[i])){
                         hh = e->subhash;
                         found = 1;
