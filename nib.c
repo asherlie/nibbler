@@ -40,23 +40,46 @@ int main(int a, char** b){
       "example.com", "example.com", "example.com", "example.com", "example.com",
       "example.com", "example.com", "example.com", "example.com", "example.com",
       "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
+      "example.com", "example.com", "example.com", "example.com", "example.com",
       "example.com", "example.com", "example.com", "example.com", "example.com"
       };
       clock_t st = clock();
-      /*struct shash* w = dl_pages(pages, 100);*/
-      struct shash* w = dl_pages(pages, 1);
+      int npages = 200;
+      struct shash* w = dl_pages(pages, npages);
       double el0 = ((double)clock()-st)/CLOCKS_PER_SEC;
       printf("dl and tagging took %lf\n", el0);
 
       if(a < 3)return 0;
-      struct shash* found;
+      /*struct shash* found;*/
       /*struct shash* found = ind_shash(&h, b+2, a-2);*/
       st = clock();
-      /*for(int i = 0; i < 100; ++i){*/
-      for(int i = 0; i < 1; ++i){
-            found = ind_shash(w+i, b+2, a-2);
+      int fail = 0, found = 0;
+      for(int i = 0; i < npages; ++i){
+            if(!w[i].entries)++fail;
+            found += (_Bool)ind_shash(w+i, b+2, a-2);
       }
       double el1 = ((double)clock()-st)/CLOCKS_PER_SEC;
+      printf("%i/%i malformed pages\n", fail, npages);
+      printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       if(!found)puts("didn't find");
       else puts("found");
