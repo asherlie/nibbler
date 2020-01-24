@@ -49,6 +49,10 @@ struct shash* dl_pages(char** urls, int npages){
             init_shash(dla[i].h);
             pthread_create(pth+i, NULL, dl_page_pth, (void*)(dla+i));
       }
+      
+      for(int i = 0; i < npages; ++i)
+            pthread_join(pth[i], NULL);
+
       return ret;
 }
 
