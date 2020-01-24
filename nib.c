@@ -19,7 +19,6 @@
 int main(int a, char** b){
       if(a < 2)return 1;
       curl_global_init(CURL_GLOBAL_ALL);
-      clock_t st = clock();
       /*struct web_page* w = dl_pages(b+1, 1);*/
       char* pages[] = {
       "example.com", "example.com", "example.com", "example.com", "example.com",
@@ -43,37 +42,22 @@ int main(int a, char** b){
       "example.com", "example.com", "example.com", "example.com", "example.com",
       "example.com", "example.com", "example.com", "example.com", "example.com"
       };
-      struct shash* w = dl_pages(pages, 100);
-      (void)w;
+      clock_t st = clock();
+      /*struct shash* w = dl_pages(pages, 100);*/
+      struct shash* w = dl_pages(pages, 1);
       double el0 = ((double)clock()-st)/CLOCKS_PER_SEC;
-      printf("dl took %lf\n", el0);
-      struct shash h[100];
-      for(int i = 0; i < 100; ++i)
-            init_shash(h+i);
-
-      #if 0
-      /* TODO: tagging of multiple pages should be done in parallel - write tag_pages() */
-      st = clock();
-      for(int i = 0; i < 100; ++i){
-            if(!tag_page(h+i, w)){
-                  
-                  puts("malformed page");
-                  /*return EXIT_FAILURE;*/
-            }
-      }
-      #endif
-      double el1 = ((double)clock()-st)/CLOCKS_PER_SEC;
-      printf("tagging took %lf\n", el1);
+      printf("dl and tagging took %lf\n", el0);
 
       if(a < 3)return 0;
       struct shash* found;
       /*struct shash* found = ind_shash(&h, b+2, a-2);*/
       st = clock();
-      for(int i = 0; i < 100; ++i){
-            found = ind_shash(h+i, b+2, a-2);
+      /*for(int i = 0; i < 100; ++i){*/
+      for(int i = 0; i < 1; ++i){
+            found = ind_shash(w+i, b+2, a-2);
       }
-      double el2 = ((double)clock()-st)/CLOCKS_PER_SEC;
-      printf("ind_shash took %lf\nall computation took %lf seconds\n", el2, el0+el1+el2);
+      double el1 = ((double)clock()-st)/CLOCKS_PER_SEC;
+      printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       if(!found)puts("didn't find");
       else puts("found");
 
