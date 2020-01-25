@@ -11,8 +11,6 @@ struct web_page{
 
 struct dl_arg{
       char* url;
-      /* dl_page_pth() writes to here */
-      //struct web_page* page;
       struct shash* h;
 };
 
