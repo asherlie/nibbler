@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
@@ -52,8 +53,33 @@ struct shash* dl_pages(char** urls, int npages){
             pthread_create(pth+i, NULL, dl_page_pth, (void*)(dla+i));
       }
       
+      #ifdef _GNU_SOURCE
+      /* if possible, might as well not dwell on one long download/parse */
+      /* this will make more of a difference when downloads will be retried 
+       * until succesfully parsed
+       */
+      int i = 0;
+      _Bool joined[npages], ex = 1;
+      memset(joined, 0, npages);
+      while(1){
+            if(i == npages){
+                  if(ex)return ret;
+                  i = 0;
+                  ex = 1;
+            }
+            if(!joined[i]){
+                  if(!pthread_tryjoin_np(pth[i], NULL)){
+                        joined[i] = 1;
+                  }
+                  else ex = 0;
+            }
+            /*usleep(1000);*/
+            ++i;
+      }
+      #else
       for(int i = 0; i < npages; ++i)
             pthread_join(pth[i], NULL);
+      #endif
 
       return ret;
 }
