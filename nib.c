@@ -17,9 +17,7 @@
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
-      if(a < 2)return 1;
       curl_global_init(CURL_GLOBAL_ALL);
-      /*struct web_page* w = dl_pages(b+1, 1);*/
       char* pages[200] = {0};
       char ex[] = "example.com";
       for(int i = 0; i < 200; ++i)
@@ -28,9 +26,10 @@ int main(int a, char** b){
        * use of clock() was giving inaccurate timings due to multiple threads using more
        * cpu time at once
       */
+      int npages = 500;
+      printf("attempting to download %i pages\n", npages);
       struct timespec st, fin;
       clock_gettime(CLOCK_MONOTONIC, &st);
-      int npages = 200;
       struct shash* w = dl_pages(pages, npages);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
@@ -39,10 +38,10 @@ int main(int a, char** b){
 
       printf("dl and tagging took %lf\n", el0);
 
-      if(a < 3)return 0;
-      /*struct shash* found;*/
-      /*struct shash* found = ind_shash(&h, b+2, a-2);*/
+      if(a < 2)return 0;
+
       clock_gettime(CLOCK_MONOTONIC, &fin);
+
       int fail = 0, found = 0;
       for(int i = 0; i < npages; ++i){
             if(!w[i].entries)++fail;
