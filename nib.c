@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <curl/curl.h>
-
-#include "strhash.h"
 #include <string.h>
-/*#include "tagger.h"*/
-#include "dl.h"
 #include <time.h>
+
+#include "dl.h"
+#include "strhash.h"
 
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
@@ -20,7 +19,7 @@
 int main(int a, char** b){
       curl_global_init(CURL_GLOBAL_ALL);
 
-      int npages = 50;
+      int npages = 500;
 
       char* pages[npages];
       memset(pages, 0, npages);
