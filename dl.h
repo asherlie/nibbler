@@ -10,9 +10,10 @@ struct web_page{
 };
 
 struct dl_arg{
+      int retries;
       char* url;
       struct shash* h;
 };
 
-struct shash* dl_pages(char** urls, int npages);
+struct shash* dl_pages(char** urls, int npages, int retries);
 #endif

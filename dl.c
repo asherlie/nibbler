@@ -24,17 +24,26 @@ void* dl_page_pth(void* dla_v){
       struct dl_arg* dla = (struct dl_arg*)dla_v;
       struct web_page w;
       CURL* c = curl_easy_init();
-      curl_easy_setopt(c, CURLOPT_URL, dla->url);
-      curl_easy_setopt(c, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-      curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, write_mem);
-      curl_easy_setopt(c, CURLOPT_WRITEDATA, (void*)&w);
 
-      CURLcode ret = curl_easy_perform(c);
-      if(ret != CURLE_OK){
-            dla->h->entries = NULL;
-            dla->h->nbux = -1;
-            /* TODO: handle this */
-            return NULL;
+      int tries = 0;
+      while(1){
+            curl_easy_setopt(c, CURLOPT_URL, dla->url);
+            curl_easy_setopt(c, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+            curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, write_mem);
+            curl_easy_setopt(c, CURLOPT_WRITEDATA, (void*)&w);
+
+            CURLcode ret = curl_easy_perform(c);
+            if(ret != CURLE_OK){
+                  if(dla->retries > tries++){
+                        ++dla->h->retries_used;
+                        continue;
+                  }
+                  dla->h->entries = NULL;
+                  dla->h->nbux = -1;
+                  /* TODO: handle this */
+                  return NULL;
+            }
+            break;
       }
 
       tag_page(dla->h, &w);
@@ -42,13 +51,14 @@ void* dl_page_pth(void* dla_v){
       return NULL;
 }
 
-struct shash* dl_pages(char** urls, int npages){
+struct shash* dl_pages(char** urls, int npages, int retries){
       struct dl_arg dla[npages];
       struct shash* ret = malloc(sizeof(struct shash)*npages);
       pthread_t pth[npages];
       for(int i = 0; i < npages; ++i){
             dla[i].url = urls[i];
             dla[i].h = ret+i;
+            dla[i].retries = retries;
             init_shash(dla[i].h);
             pthread_create(pth+i, NULL, dl_page_pth, (void*)(dla+i));
       }
@@ -69,6 +79,7 @@ struct shash* dl_pages(char** urls, int npages){
             }
             if(!joined[i]){
                   if(!pthread_tryjoin_np(pth[i], NULL)){
+                        /*printf("joined thread %i\n", i);*/
                         joined[i] = 1;
                   }
                   else ex = 0;

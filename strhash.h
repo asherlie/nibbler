@@ -12,7 +12,8 @@ struct sh_entry{
 };
 
 struct shash{
-      int nbux;
+      int nbux,
+          retries_used;
       struct sh_entry** entries;
 };
 

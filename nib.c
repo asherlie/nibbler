@@ -2,6 +2,7 @@
 #include <curl/curl.h>
 
 #include "strhash.h"
+#include <string.h>
 /*#include "tagger.h"*/
 #include "dl.h"
 #include <time.h>
@@ -18,25 +19,34 @@
  */
 int main(int a, char** b){
       curl_global_init(CURL_GLOBAL_ALL);
-      char* pages[200] = {0};
+
+      int npages = 50;
+
+      char* pages[npages];
+      memset(pages, 0, npages);
+
       char ex[] = "example.com";
-      for(int i = 0; i < 200; ++i)
+      for(int i = 0; i < npages; ++i)
             pages[i] = ex;
       /*
        * use of clock() was giving inaccurate timings due to multiple threads using more
        * cpu time at once
       */
-      int npages = 500;
       printf("attempting to download %i pages\n", npages);
       struct timespec st, fin;
       clock_gettime(CLOCK_MONOTONIC, &st);
-      struct shash* w = dl_pages(pages, npages);
+      struct shash* w = dl_pages(pages, npages, 1);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el0 = fin.tv_sec - st.tv_sec;
       el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
-      printf("dl and tagging took %lf\n", el0);
+      int tries = 0;
+      for(int i = 0; i < npages; ++i){
+            tries += w[i].retries_used;
+      }
+
+      printf("dl and tagging took %lf with %i retries\n", el0, tries);
 
       if(a < 2)return 0;
 
