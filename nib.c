@@ -19,7 +19,7 @@
 int main(int a, char** b){
       curl_global_init(CURL_GLOBAL_ALL);
 
-      int npages = 500;
+      int npages = 100;
 
       char* pages[npages];
       memset(pages, 0, npages);
@@ -49,7 +49,7 @@ int main(int a, char** b){
 
       if(a < 2)return 0;
 
-      clock_gettime(CLOCK_MONOTONIC, &fin);
+      clock_gettime(CLOCK_MONOTONIC, &st);
 
       int fail = 0, found = 0;
       for(int i = 0; i < npages; ++i){
