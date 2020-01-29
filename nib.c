@@ -6,6 +6,34 @@
 #include "dl.h"
 #include "strhash.h"
 
+void test(){
+      FILE* fp = fopen("ex", "r");
+      char ex[1257] = {0};
+      int ind = 0;
+      while((ex[ind++] = fgetc(fp)) != EOF);
+
+      struct web_page w;
+      w.bytes = 1256;
+      w.data = ex;
+
+      struct shash h;
+      init_shash(&h);
+
+      if(!tag_page(&h, &w))puts("failed to tag");
+
+      {
+      char* path[] = {"html", "head"};
+
+      if(!ind_shash(&h, path, 2))puts("failed to find hh");
+      }
+
+      {
+      char* path[] = {"html", "body"};
+
+      if(!ind_shash(&h, path, 2))puts("failed to find hb");
+      }
+}
+
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
  */
@@ -17,6 +45,9 @@
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
+      test();
+      return 0;
+
       curl_global_init(CURL_GLOBAL_ALL);
 
       int npages = 1;
