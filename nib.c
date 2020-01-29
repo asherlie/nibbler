@@ -19,7 +19,7 @@
 int main(int a, char** b){
       curl_global_init(CURL_GLOBAL_ALL);
 
-      int npages = 100;
+      int npages = 1;
 
       char* pages[npages];
       memset(pages, 0, npages);
@@ -40,28 +40,27 @@ int main(int a, char** b){
       double el0 = fin.tv_sec - st.tv_sec;
       el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
-      int tries = 0;
+      int tries = 0, failures = 0;
       for(int i = 0; i < npages; ++i){
             tries += w[i].retries_used;
+            if(!w[i].entries)++failures;
       }
 
       printf("dl and tagging took %lf with %i retries\n", el0, tries);
+      printf("%i/%i malformed pages\n", failures, npages);
 
       if(a < 2)return 0;
 
       clock_gettime(CLOCK_MONOTONIC, &st);
 
-      int fail = 0, found = 0;
-      for(int i = 0; i < npages; ++i){
-            if(!w[i].entries)++fail;
-            found += (_Bool)ind_shash(w+i, b+2, a-2);
-      }
+      int found = 0;
+      for(int i = 0; i < npages; ++i)
+            found += (_Bool)ind_shash(w+i, b+1, a-1);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;
       el1 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
-      printf("%i/%i malformed pages\n", fail, npages);
       printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       if(!found)puts("didn't find");
