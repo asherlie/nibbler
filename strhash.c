@@ -123,25 +123,6 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
 }
 
 struct shash* ind_shash(struct shash* h, char** path, int depth){
-/*struct strhash* ind_shash(struct shash* h, char** path, int depth){*/
-/*
- *       struct shash* hh = h;
- *       int ind;
- *       for(char* i = *path; *i; ++i){
- *             printf("first char: %c\n", *i);
- *             ind = *i%hh->nbux;
- *             if(!hh->entries[ind])return NULL;
- *             struct sh_entry* e;
- *             for(e = hh->entries[ind]; e; e = e->next){
- *                   printf("comparing %s and %s\n", i, e->tag);
- *                   if(streq(e->tag, i)){
- *                         hh = e->subhash;
- *                         break;
- *                   }
- *             }
- *       }
- * 
-*/
       struct shash* hh = h;
       int ind;
       _Bool found;
