@@ -1,5 +1,6 @@
 #ifndef _STRHASH
 #define _STRHASH
+
 /* a stackable hashing structure */
 struct shash;
 

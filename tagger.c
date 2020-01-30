@@ -10,7 +10,6 @@ _Bool tag_page(struct shash* h, struct web_page* w){
       /*
        * FILE* fp = fopen("ex", "r");
       */
-      int in_tag = 0;
       char c;
 
       /*
@@ -22,34 +21,35 @@ _Bool tag_page(struct shash* h, struct web_page* w){
       char str[2000] = {0};
       (void)str;
 
-      int ind = 0;
+      int ind = 0, d_ind = 0;
       size_t str_off = 0;
-      char tag[100];
+      char tag[100], data[500];
 
       /* int depth refers to current depth in tags */
       /* char** cur_path stores a list of tag strings that lead to current */
-      /* TODO: dynamically resize */
+      /* TODO: dynamically resize both tag and data if necessary */
       int depth = 0;
       char** cur_path = malloc(sizeof(char*)*500);
       for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, 100);
 
       while(str_off < strlen){
             c = raw_page[str_off++];
-      /*while((c = fgetc(fp)) != EOF){*/
             if(c == '<'){
                   if(raw_page[str_off] == '!')continue;
                   ind = 0;
                   memset(tag, 0, 100);
 
-                  ++in_tag;
-                  /*while((c = fgetc(fp)) != '>'){*/
-                  while((c = raw_page[str_off++]) != '>'){
-                  /*while((c = fgetc(fp)) != '>'){*/
+                  while((c = raw_page[str_off++]) != '>')
                         tag[ind++] = c;
-                  }
 
                   /* self contained tags are skipped for now */
-                  if(tag[ind-1] == '/')continue;
+                  if(tag[ind-1] == '/'){
+                        /* TODO: possibly insert this tag with the internal
+                         *       text as data segment 
+                         */
+                        /* insert_shash(h, ); */
+                        continue;
+                  }
 
                   if(*tag != '/'){
                         memcpy(cur_path[depth++], tag, ind);
@@ -57,20 +57,17 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                   }
                   else if(--depth < 0)return 0;
 
-
                   /*
                    * printf("\ndepth: %i\n", depth);
                    * for(int i = 0; i < depth; ++i)printf("%s, ", cur_path[i]);
                   */
 
                   /* tag is memcpy'd, no need to throw on heap */
-                  insert_shash(h, cur_path, depth, "some data");
-                  /*printf("%i: tag in prog: %s\n", in_tag, tag);*/
+                  /* adding NUL char to data */
+                  data[d_ind] = 0;
+                  insert_shash(h, cur_path, depth, data);
             }
-            if(c == '>'){
-            /*we pop up a level of interest in hash struct*/
-                  --in_tag;
-            }
+            else data[d_ind++] = c;
       }
       return 1;
       /*printf("%i\n", in_tag);*/
