@@ -28,9 +28,9 @@ void test(){
       }
 
       {
-      char* path[] = {"html", "body"};
+      char* path[] = {"html", "body", "div", "h1"};
 
-      if(!ind_shash(&h, path, 2))puts("failed to find hb");
+      if(!ind_shash(&h, path, 3))puts("failed to find hb");
       }
 }
 
