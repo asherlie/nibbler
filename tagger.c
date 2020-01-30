@@ -47,11 +47,16 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                   /*while((c = fgetc(fp)) != '>'){*/
                         tag[ind++] = c;
                   }
-                  /* self contained tags get inserted as a final step */
-                  if(*tag != '/')memcpy(cur_path[depth++], tag, ind);
-                  else{
-                        if(--depth < 0)return 0;
+
+                  /* self contained tags are skipped for now */
+                  if(tag[ind-1] == '/')continue;
+
+                  if(*tag != '/'){
+                        memcpy(cur_path[depth++], tag, ind);
+                        cur_path[depth-1][ind] = 0;
                   }
+                  else if(--depth < 0)return 0;
+
 
                   /*
                    * printf("\ndepth: %i\n", depth);
