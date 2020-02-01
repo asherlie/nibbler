@@ -15,7 +15,7 @@ _Bool streq(char* x, char* y){
 }
 
 /*void insert_shash(struct shash* h, char* tag){*/
-void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
+struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
       /*
        * this whole function needs to be broken up
        * there should be an abstract function that just inserts an item into hash
@@ -85,7 +85,8 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
              */
             e = e->next;
       }
-      memcpy(e->data, data, 500);
+      return e;
+      /*memcpy(e->data, data, 500);*/
 }
 
 struct sh_entry* ind_shash(struct shash* h, char** path, int depth){
