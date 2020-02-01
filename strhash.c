@@ -16,14 +16,11 @@ _Bool streq(char* x, char* y){
 
 /*void insert_shash(struct shash* h, char* tag){*/
 void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
-      /* TODO: insert data */
-      (void)data;
-
-/*
- * this whole function needs to be broken up
- * there should be an abstract function that just inserts an item into hash
- * this will call that often recurseivly or some shit
-*/
+      /*
+       * this whole function needs to be broken up
+       * there should be an abstract function that just inserts an item into hash
+       * this will call that often recurseivly
+      */
       
       int ind;
       /*_Bool eq;*/
@@ -35,17 +32,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
       for(int i = 0; i < _cur_depth; ++i){
             ind = (*_cur_path[i])%h->nbux; 
 
-            /*printf("hashing %c, checking mod %i\n", *_cur_path[i], ind);*/
-            /*
-             * printf("checking if bucket \"%s\" exists in h: ", _cur_path[i]);
-             * for(int x = 0; x < i; ++x){
-             *       printf("%s/", _cur_path[x]);
-             * }
-             * printf("\\...");
-            */
             if(!sub_h->entries[ind]){
-                  /*puts("doesn't");*/
-                  /*printf("inserted bucket %s\n", cur_path[i]);*/
                   sub_h->entries[ind] = calloc(1, sizeof(struct sh_entry));
                   sub_h->entries[ind]->subhash = calloc(1, sizeof(struct shash));
                   init_shash(sub_h->entries[ind]->subhash);
@@ -60,18 +47,11 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
                   /*if(i == _cur_depth)return;*/
                   continue;
             }
-            /*else puts("DOES");*/
 
             /* otherwise, we still need to find the last index of linked list */
             /* TODO: keep a last pointer */
             /*each bucket has a linked list*/
             struct sh_entry* e = sub_h->entries[ind];
-
-            /* recurse */
-            /*sub_h = sub_h->entries[ind]->subhash;*/
-
-            /* e is initialized to NULL with calloc */
-            /*if(!e->)*/
 
             for(; e->next; e = e->next){
                   if(streq(cur_path[i], e->tag)){
@@ -95,31 +75,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
             memcpy(e->next->tag, _cur_path[i], 100);
 
             sub_h = e->next->subhash;
-            /*printf("found %p->%p\n", (void*)e, (void*)e->next);*/
-            /*
-             * if(!eq){
-             *       e->next = calloc(sizeof(gt));
-             * }
-            */
-
       }
-      /* TODO: insert data somewhere in this final hash */
-      /*sub_h->*/
-      
-      /* tag will be implicitly added at this point */
-
-      /* at this point, sub_h will point to the appropriate shash* */
-      /* might as well just use 255 indices for chars */
-      /*int ind = *tag%h->nbux; */
-      /* this is bad... */
-      /*
-       * struct sh_entry* e = &h->entries[ind];
-       * if(!e){
-       *       e = calloc(sizeof(struct sh_entry), 1);
-       *       e->subhash = calloc(sizeof(struct shash), 1);
-       *       init_shash(e->subhash);
-       * }
-      */
 }
 
 struct sh_entry* ind_shash(struct shash* h, char** path, int depth){
