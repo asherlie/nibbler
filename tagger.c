@@ -32,6 +32,12 @@ _Bool tag_page(struct shash* h, struct web_page* w){
       char** cur_path = malloc(sizeof(char*)*500);
       for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, 100);
 
+      /* return values from insert_shash() are stored in e 
+       * this allows us to insert data into the previous
+       * entry once a '/' is detected
+       */
+      struct sh_entry* e = NULL;
+
       while(str_off < strlen){
             c = raw_page[str_off++];
             if(c == '<'){
@@ -52,10 +58,24 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                   }
 
                   if(*tag != '/'){
+                        /*printf("");*/
                         memcpy(cur_path[depth++], tag, ind);
                         cur_path[depth-1][ind] = 0;
                   }
-                  else if(--depth < 0)return 0;
+                  else{
+                        if(--depth < 0)return 0;
+                        /* if we have data to add */
+                        /*
+                         * data must be added after the '/' has been found
+                         * otherwise, we don't have the data 
+                         */
+                        /*if(d_ind && e){*/
+                        if(d_ind){
+                              memcpy(e->data, data, d_ind);
+                              e->data[d_ind] = 0;
+                              d_ind = 0;
+                        }
+                  }
 
                   /*
                    * printf("\ndepth: %i\n", depth);
@@ -64,9 +84,14 @@ _Bool tag_page(struct shash* h, struct web_page* w){
 
                   /* tag is memcpy'd, no need to throw on heap */
                   /* adding NUL char to data */
-                  data[d_ind] = 0;
-                  insert_shash(h, cur_path, depth, data);
-                  d_ind = 0;
+                  /*data[d_ind] = 0;*/
+                  /*
+                   *printf("inserting shash cur tag: %s data: %s in tag ", tag, data);
+                   *for(int i = 0; i < depth; ++i)printf("%s, ", cur_path[i]);
+                   *puts("");
+                   */
+                  e = insert_shash(h, cur_path, depth, data);
+                  /*d_ind = 0;*/
             }
             else data[d_ind++] = c;
       }
