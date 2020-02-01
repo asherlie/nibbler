@@ -66,6 +66,7 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                   /* adding NUL char to data */
                   data[d_ind] = 0;
                   insert_shash(h, cur_path, depth, data);
+                  d_ind = 0;
             }
             else data[d_ind++] = c;
       }

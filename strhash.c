@@ -29,17 +29,21 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
       int _cur_depth = cur_depth;
 
       struct shash* sub_h = h;
+      /* e is declared here to have a convenient pointer to our sh_entry
+       * so that we can insert data
+       */
+      struct sh_entry* e;
       for(int i = 0; i < _cur_depth; ++i){
             ind = (*_cur_path[i])%h->nbux; 
 
             if(!sub_h->entries[ind]){
-                  sub_h->entries[ind] = calloc(1, sizeof(struct sh_entry));
-                  sub_h->entries[ind]->subhash = calloc(1, sizeof(struct shash));
-                  init_shash(sub_h->entries[ind]->subhash);
+                  e = sub_h->entries[ind] = calloc(1, sizeof(struct sh_entry));
+                  e->subhash = calloc(1, sizeof(struct shash));
+                  init_shash(e->subhash);
 
                   /* if we've just initialized bucket, insert and get out */
-                  memcpy(sub_h->entries[ind]->tag, _cur_path[i], 100);
-                  sub_h = sub_h->entries[ind]->subhash;
+                  memcpy(e->tag, _cur_path[i], 100);
+                  sub_h = e->subhash;
 
                   --_cur_depth;
                   ++_cur_path;
@@ -51,7 +55,7 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
             /* otherwise, we still need to find the last index of linked list */
             /* TODO: keep a last pointer */
             /*each bucket has a linked list*/
-            struct sh_entry* e = sub_h->entries[ind];
+            e = sub_h->entries[ind];
 
             for(; e->next; e = e->next){
                   if(streq(cur_path[i], e->tag)){
@@ -75,7 +79,13 @@ void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
             memcpy(e->next->tag, _cur_path[i], 100);
 
             sub_h = e->next->subhash;
+            /* setting e to our newly inserted sh_entry in case
+             * this is the last iteration and we will need
+             * to insert data into e->next
+             */
+            e = e->next;
       }
+      memcpy(e->data, data, 500);
 }
 
 struct sh_entry* ind_shash(struct shash* h, char** path, int depth){
