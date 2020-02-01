@@ -79,14 +79,10 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
             memcpy(e->next->tag, _cur_path[i], 100);
 
             sub_h = e->next->subhash;
-            /* setting e to our newly inserted sh_entry in case
-             * this is the last iteration and we will need
-             * to insert data into e->next
-             */
+            /* ensuring e is pointing to our newly created entry */
             e = e->next;
       }
       return e;
-      /*memcpy(e->data, data, 500);*/
 }
 
 struct sh_entry* ind_shash(struct shash* h, char** path, int depth){

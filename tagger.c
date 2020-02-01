@@ -12,18 +12,9 @@ _Bool tag_page(struct shash* h, struct web_page* w){
       */
       char c;
 
-      /*
-       * struct shash h;
-       * init_shash(&h);
-      */
-
-      /* TODO: insert contents of tags in strhash */
-      char str[2000] = {0};
-      (void)str;
-
       int ind = 0, d_ind = 0;
       size_t str_off = 0;
-      char tag[100], data[500];
+      char tag[100], data[800];
 
       /* int depth refers to current depth in tags */
       /* char** cur_path stores a list of tag strings that lead to current */
@@ -77,24 +68,9 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                         }
                   }
 
-                  /*
-                   * printf("\ndepth: %i\n", depth);
-                   * for(int i = 0; i < depth; ++i)printf("%s, ", cur_path[i]);
-                  */
-
-                  /* tag is memcpy'd, no need to throw on heap */
-                  /* adding NUL char to data */
-                  /*data[d_ind] = 0;*/
-                  /*
-                   *printf("inserting shash cur tag: %s data: %s in tag ", tag, data);
-                   *for(int i = 0; i < depth; ++i)printf("%s, ", cur_path[i]);
-                   *puts("");
-                   */
                   e = insert_shash(h, cur_path, depth, data);
-                  /*d_ind = 0;*/
             }
             else data[d_ind++] = c;
       }
       return 1;
-      /*printf("%i\n", in_tag);*/
 }

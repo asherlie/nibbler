@@ -28,14 +28,14 @@ void test(){
       char* path[] = {"html", "head"};
 
       if(!(e = ind_shash(&h, path, 2)))puts("failed to find hh");
-      else printf("tag: %s, data: %s\n", e->tag, e->data);
+      /*else printf("tag: %s, data: %s\n", e->tag, e->data);*/
       }
 
       {
       char* path[] = {"html", "body", "div", "h1"};
 
       if(!(e = ind_shash(&h, path, 4)))puts("failed to find hb");
-      else printf("tag: %s, data: %s\n", e->tag, e->data);
+      /*else printf("tag: %s, data: %s\n", e->tag, e->data);*/
       }
 }
 
