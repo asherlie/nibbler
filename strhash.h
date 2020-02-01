@@ -5,7 +5,7 @@
 struct shash;
 
 struct sh_entry{
-      char tag[100];
+      char tag[100], data[500];
       struct shash* subhash;
 
       /* linked list for multiple tags in the same bucket */
@@ -21,8 +21,8 @@ struct shash{
 void init_shash(struct shash* h);
 void insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data);
 
-/* ind_shash() returns a struct shash that is located at:
+/* ind_shash() returns a struct sh_entry that is located at:
  * h[path[0]][path[1]][path[2]][...]
  */
-struct shash* ind_shash(struct shash* h, char** path, int depth);
+struct sh_entry* ind_shash(struct shash* h, char** path, int depth);
 #endif
