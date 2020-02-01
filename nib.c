@@ -21,16 +21,21 @@ void test(){
 
       if(!tag_page(&h, &w))puts("failed to tag");
 
+
+      struct sh_entry* e;
+
       {
       char* path[] = {"html", "head"};
 
-      if(!ind_shash(&h, path, 2))puts("failed to find hh");
+      if(!(e = ind_shash(&h, path, 2)))puts("failed to find hh");
+      else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 
       {
       char* path[] = {"html", "body", "div", "h1"};
 
-      if(!ind_shash(&h, path, 3))puts("failed to find hb");
+      if(!(e = ind_shash(&h, path, 3)))puts("failed to find hb");
+      else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 }
 
