@@ -16,6 +16,7 @@ _Bool streq(char* x, char* y){
 
 /*void insert_shash(struct shash* h, char* tag){*/
 struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, char* data){
+      (void)data;
       /*
        * this whole function needs to be broken up
        * there should be an abstract function that just inserts an item into hash
@@ -32,7 +33,7 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
       /* e is declared here to have a convenient pointer to our sh_entry
        * so that we can insert data
        */
-      struct sh_entry* e;
+      struct sh_entry* e = NULL;
       for(int i = 0; i < _cur_depth; ++i){
             ind = (*_cur_path[i])%h->nbux; 
 
@@ -89,7 +90,7 @@ struct sh_entry* ind_shash(struct shash* h, char** path, int depth){
       struct shash* hh = h;
       int ind;
       _Bool found;
-      struct sh_entry* e;
+      struct sh_entry* e = NULL;
       for(int i = 0; i < depth; ++i){
             ind = *path[i]%hh->nbux;
             if(!hh->entries[ind])return NULL;

@@ -12,16 +12,28 @@ _Bool tag_page(struct shash* h, struct web_page* w){
       */
       char c;
 
-      int ind = 0, d_ind = 0;
+      /* keeping track of size and capacity of tag and data, respectively */
+      int t_ind = 0, t_cap = 100,
+          d_ind = 0, d_cap = 500;
+
       size_t str_off = 0;
-      char tag[100], data[800];
+
+      /* tag can be malloc'd because it is memset() every iteration,
+       * data can be malloc'd because it is memcpy'd only to the point
+       * of d_ind each iteration
+       */
+      char* tag = malloc(sizeof(char)*t_cap), * data = malloc(sizeof(char)*d_cap);
 
       /* int depth refers to current depth in tags */
       /* char** cur_path stores a list of tag strings that lead to current */
-      /* TODO: dynamically resize both tag and data if necessary */
       int depth = 0;
+      /* TODO dynamically resize cur_path */
       char** cur_path = malloc(sizeof(char*)*500);
-      for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, 100);
+
+      /* no need to pre-alloc these - they can be allocated
+       * to the perfect size immediately before memcpying
+       */
+      /*for(int i = 0; i < 500; ++i)cur_path[i] = calloc(1, t_);*/
 
       /* return values from insert_shash() are stored in e 
        * this allows us to insert data into the previous
@@ -33,14 +45,25 @@ _Bool tag_page(struct shash* h, struct web_page* w){
             c = raw_page[str_off++];
             if(c == '<'){
                   if(raw_page[str_off] == '!')continue;
-                  ind = 0;
-                  memset(tag, 0, 100);
+                  t_ind = 0;
+                  /* there's no need to zero tag if t_ind is set
+                   * to zero before copying
+                   */
+                  /*memset(tag, 0, t_cap);*/
 
-                  while((c = raw_page[str_off++]) != '>')
-                        tag[ind++] = c;
+                  while((c = raw_page[str_off++]) != '>'){
+                        if(t_ind == t_cap){
+                              t_cap *= 2;
+                              char* tmp = malloc(sizeof(char)*t_cap);
+                              memcpy(tmp, tag, t_ind);
+                              free(tag);
+                              tag = tmp;
+                        }
+                        tag[t_ind++] = c;
 
+                  }
                   /* self contained tags are skipped for now */
-                  if(tag[ind-1] == '/'){
+                  if(tag[t_ind-1] == '/'){
                         /* TODO: possibly insert this tag with the internal
                          *       text as data segment 
                          */
@@ -49,9 +72,9 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                   }
 
                   if(*tag != '/'){
-                        /*printf("");*/
-                        memcpy(cur_path[depth++], tag, ind);
-                        cur_path[depth-1][ind] = 0;
+                        cur_path[depth] = malloc(t_ind+1);
+                        memcpy(cur_path[depth++], tag, t_ind);
+                        cur_path[depth-1][t_ind] = 0;
                   }
                   else{
                         if(--depth < 0)return 0;
@@ -68,9 +91,27 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                         }
                   }
 
-                  e = insert_shash(h, cur_path, depth, data);
+                  /*
+                   *printf("cur path: ");
+                   *for(int i = 0; i < depth; ++i)
+                   *      printf("%s ", cur_path[i]);
+                   *puts("");
+                   *e = insert_shash(h, cur_path, depth, data);
+                   */
+                   e = insert_shash(h, cur_path, depth, NULL);
             }
-            else data[d_ind++] = c;
+            else{
+                  if(d_ind == d_cap){
+                        d_cap *= 2;
+                        char* tmp = malloc(sizeof(char)*d_cap);
+                              puts("attempting mc 3");
+                        memcpy(tmp, data, d_ind);
+                        puts("DONE");
+                        free(data);
+                        data = tmp;
+                  }
+                  data[d_ind++] = c;
+            }
       }
       return 1;
 }
