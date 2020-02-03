@@ -27,15 +27,20 @@ void test(){
       {
       char* path[] = {"html", "head"};
 
-      if(!(e = ind_shash(&h, path, 2)))puts("failed to find hh");
-      /*else printf("tag: %s, data: %s\n", e->tag, e->data);*/
+      if(!(e = ind_shash(&h, path, 2, 0)))puts("failed to find hh");
+      else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 
       {
       char* path[] = {"html", "body", "div", "h1"};
 
-      if(!(e = ind_shash(&h, path, 4)))puts("failed to find hb");
-      /*else printf("tag: %s, data: %s\n", e->tag, e->data);*/
+      /*
+       * fix all mem leaks, dynamically allocate cur_path
+       * data in strhash.h should be a char* that's dynamically alloc'd
+      */
+
+      if(!(e = ind_shash(&h, path, 4, 2)))puts("failed to find hb");
+      else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 }
 
@@ -91,7 +96,7 @@ int main(int a, char** b){
 
       int found = 0;
       for(int i = 0; i < npages; ++i)
-            found += (_Bool)ind_shash(w+i, b+1, a-1);
+            found += (_Bool)ind_shash(w+i, b+1, a-1, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;

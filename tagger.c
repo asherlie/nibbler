@@ -91,22 +91,13 @@ _Bool tag_page(struct shash* h, struct web_page* w){
                         }
                   }
 
-                  /*
-                   *printf("cur path: ");
-                   *for(int i = 0; i < depth; ++i)
-                   *      printf("%s ", cur_path[i]);
-                   *puts("");
-                   *e = insert_shash(h, cur_path, depth, data);
-                   */
-                   e = insert_shash(h, cur_path, depth, NULL);
+                  e = insert_shash(h, cur_path, depth, NULL);
             }
             else{
                   if(d_ind == d_cap){
                         d_cap *= 2;
                         char* tmp = malloc(sizeof(char)*d_cap);
-                              puts("attempting mc 3");
                         memcpy(tmp, data, d_ind);
-                        puts("DONE");
                         free(data);
                         data = tmp;
                   }

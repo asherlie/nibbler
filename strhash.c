@@ -59,6 +59,7 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
             e = sub_h->entries[ind];
 
             for(; e->next; e = e->next){
+
                   if(streq(cur_path[i], e->tag)){
                   /* if cur_path[i] is already in current tag, increment sub_h, continue */
                         /*sub_h = e->next->subhash;*/
@@ -71,7 +72,8 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
              * otherwise we can just set a flag if streq()
              * and replace this condition
              */
-            if(sub_h == e->subhash)continue;
+            /* we're allowing duplicates in the lowest depth */
+            if(sub_h == e->subhash && i < cur_depth-1)continue;
 
             /* this shouldn't be reached if we've found a bucket */
             e->next = calloc(1, sizeof(struct sh_entry));
@@ -86,20 +88,22 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
       return e;
 }
 
-struct sh_entry* ind_shash(struct shash* h, char** path, int depth){
+/* index */
+struct sh_entry* ind_shash(struct shash* h, char** path, int depth, int index){
       struct shash* hh = h;
       int ind;
-      _Bool found;
+      /*_Bool found;*/
+      int found;
       struct sh_entry* e = NULL;
       for(int i = 0; i < depth; ++i){
             ind = *path[i]%hh->nbux;
             if(!hh->entries[ind])return NULL;
             found = 0;
             for(e = hh->entries[ind]; e; e = e->next){
-                  /*printf("comparing %s and %s\n", path[i], e->tag);*/
                   if(streq(e->tag, path[i])){
                         hh = e->subhash;
-                        found = 1;
+                        ++found;
+                        if(i < depth-1 || found == index+1)
                         break;
                   }
             }
