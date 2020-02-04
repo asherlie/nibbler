@@ -28,4 +28,5 @@ struct sh_entry* insert_shash(struct shash* h, char** cur_path, int cur_depth, c
  * h[path[0]][path[1]][path[2]][...]
  */
 struct sh_entry* ind_shash(struct shash* h, char** path, int depth, int index);
+struct sh_entry* find_entry(struct shash* h, char** path, int n);
 #endif

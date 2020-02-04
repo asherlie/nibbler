@@ -121,3 +121,60 @@ struct sh_entry* ind_shash(struct shash* h, char** path, int depth, int index){
  * 
  *       each open brace we insert a new tag 
 */
+
+_Bool strtoi(const char* str, int* i){
+     char* res;
+     unsigned int r = strtol(str, &res, 10);
+     if(*res)return 0;
+     *i = (int)r;
+     return 1;
+}
+
+struct sh_entry* find_entry(struct shash* h, char** path, int n){
+      int ind;
+
+      /* n is a strict upper bound for the number of
+       * necessary calls to ind_shash
+       */
+      char** calls[n];
+      /* call depth keeps track of the length
+       * of subcalls
+       */
+      int call_depth[n], call_ind[n], subcalls = 1;
+      memset(call_depth, 0, sizeof(int)*n);
+      memset(call_ind, 0, sizeof(int)*n);
+
+      calls[0] = path;
+      call_depth[0] = 1;
+
+      /* can we start at i = 1? */
+      for(int i = 1; i < n; ++i){
+            if(strtoi(path[i], &ind)){
+                  call_ind[subcalls-1] = ind;
+                  /* if there's more to parse, create new subcall */
+                  if(i != n-1)calls[subcalls++] = path+i+1;
+            }
+            else{
+                  ++call_depth[subcalls-1];
+            }
+      }
+
+      #if 0
+      for(int i = 0; i < subcalls; ++i){
+            printf("subcall: %i ind: %i\n", i, call_ind[i]);
+            for(int j = 0; j < call_depth[i]; ++j){
+                  printf("  %s\n", calls[i][j]);
+            }
+      }
+      #endif
+      struct shash* hh = h;
+      struct sh_entry* e;
+      for(int i = 0; i < subcalls; ++i){
+            /*printf("ind_shash(hh, calls[i], )");*/
+            e = ind_shash(hh, calls[i], call_depth[i], call_ind[i]);
+
+            if(!e)return NULL;
+            hh = e->subhash;
+      }
+      return e;
+}

@@ -8,7 +8,7 @@
 
 char* strip_ws(char* str){
       char* ret;
-      for(ret = str; *ret && (*ret == '\n' || *ret == ' '));
+      for(ret = str; *ret && (*ret == '\n' || *ret == ' '); ++ret);
       return ret;
 }
 
@@ -34,7 +34,7 @@ void test(){
       char* path[] = {"html", "head", "title"};
 
       if(!(e = ind_shash(&h, path, 3, 0)))puts("failed to find hh");
-      else printf("tag: %s, data: %s\n", e->tag, e->data);
+      else printf("tag 0: %s, data: %s\n", e->tag, strip_ws(e->data));
       }
 
       {
@@ -46,7 +46,13 @@ void test(){
       */
 
       if(!(e = ind_shash(&h, path, 4, 1)))puts("failed to find hb");
-      else printf("tag: %s, data: %s\n", e->tag, e->data);
+      else printf("tag 1: %s, data: %s\n", e->tag, strip_ws(e->data));
+      }
+
+      {
+      char* path[] = {"html", "body", "div", "div", "0", "h1"};
+      if(!(e = find_entry(&h, path, 6)))puts("failed to find zz");
+      else printf("tag 2: %s, data: %s\n", e->tag, strip_ws(e->data));
       }
 }
 
