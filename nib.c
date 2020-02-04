@@ -6,9 +6,15 @@
 #include "dl.h"
 #include "strhash.h"
 
+char* strip_ws(char* str){
+      char* ret;
+      for(ret = str; *ret && (*ret == '\n' || *ret == ' '));
+      return ret;
+}
+
 void test(){
       FILE* fp = fopen("ex", "r");
-      char ex[1257] = {0};
+      char ex[1500] = {0};
       int ind = 0;
       while((ex[ind++] = fgetc(fp)) != EOF);
 
@@ -25,9 +31,9 @@ void test(){
       struct sh_entry* e;
 
       {
-      char* path[] = {"html", "head"};
+      char* path[] = {"html", "head", "title"};
 
-      if(!(e = ind_shash(&h, path, 2, 0)))puts("failed to find hh");
+      if(!(e = ind_shash(&h, path, 3, 0)))puts("failed to find hh");
       else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 
@@ -39,7 +45,7 @@ void test(){
        * data in strhash.h should be a char* that's dynamically alloc'd
       */
 
-      if(!(e = ind_shash(&h, path, 4, 2)))puts("failed to find hb");
+      if(!(e = ind_shash(&h, path, 4, 1)))puts("failed to find hb");
       else printf("tag: %s, data: %s\n", e->tag, e->data);
       }
 }
