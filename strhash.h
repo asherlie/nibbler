@@ -6,7 +6,7 @@ struct shash;
 
 struct sh_entry{
       /* TODO: data should be a char* that is dynamically allocated */
-      char tag[100], * data;
+      char* tag, * data;
       struct shash* subhash;
 
       /* last should only be set in first entry of bucket */
