@@ -20,12 +20,16 @@ void test(){
 
       struct web_page w;
       w.bytes = 1256;
+      w.bytes = 1379;
       w.data = ex;
 
       struct shash h;
       init_shash(&h);
 
-      if(!tag_page(&h, &w))puts("failed to tag");
+      taggem(&h, &w);
+
+      /*if(!tag_page(&h, &w))puts("failed to tag");*/
+      return;
 
 
       struct sh_entry* e;
