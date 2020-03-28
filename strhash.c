@@ -8,6 +8,7 @@ void init_shash(struct shash* h){
       h->nbux = 251;
       h->entries = calloc(h->nbux, sizeof(struct sh_entry));
       h->retries_used = 0;
+      h->parent = h;
 }
 
 _Bool streq(char* x, char* y){

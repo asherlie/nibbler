@@ -10,15 +10,19 @@ struct sh_entry{
       char tag[100], data[500];
       struct shash* subhash;
 
+      /* last should only be set in first entry of bucket */
       /* linked list for multiple tags in the same bucket */
-      struct sh_entry* next;
+      struct sh_entry* next,
+                     * last;
 };
 
 struct shash{
+      struct shash* parent;
+
       int nbux,
           retries_used;
       /* last is used for O(1) insertion */
-      struct sh_entry** entries, * last;
+      struct sh_entry** entries;//, * last;
 };
 
 void init_shash(struct shash* h);
