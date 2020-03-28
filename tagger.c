@@ -5,9 +5,9 @@
 #include "tagger.h"
 
 void taggem(struct shash* h, struct web_page* w){
-      char tag[100] = {0};
+      char tag[100] = {0}, data[1500] = {0};
       _Bool in_tag = 0;
-      int t_ind = 0;
+      int t_ind = 0, d_ind = 0;
       struct shash* current = h;
       for(unsigned int i = 0; i < w->bytes; ++i){
             char c = w->data[i];
@@ -18,6 +18,9 @@ void taggem(struct shash* h, struct web_page* w){
                   memset(tag, 0, 100);
             }
             else if(c == '>'){
+                  printf("data: \"%s\"\n", data);
+                  memset(data, 0, d_ind);
+                  d_ind = 0;
                   if(in_tag){
                         in_tag = 0;
                         if(tag[t_ind-1] == '/')continue;
@@ -29,7 +32,7 @@ void taggem(struct shash* h, struct web_page* w){
                         }
 
                         /* inserting a tag into current->entries */
-                        printf("tag: \"%21s\" @ %p\n", tag, (void*)current);
+                        printf("tag: \"%s\" @ %p\n", tag, (void*)current);
                         /*if(!current)puts("ANTICIPATED");*/
 
                         int bucket = (tag[1])%current->nbux;
@@ -71,6 +74,10 @@ void taggem(struct shash* h, struct web_page* w){
             }
             else if(in_tag){
                   tag[t_ind++] = c;
+            }
+            /* if this is the first char of data and is WS, ignore */
+            else if(d_ind || (c != ' ' && c != '\n')){
+                  data[d_ind++] = c;
             }
       }
 }
