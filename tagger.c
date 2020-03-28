@@ -5,8 +5,6 @@
 #include "tagger.h"
 
 void taggem(struct shash* h, struct web_page* w){
-      /* TODO: get rid of 1500 sz buffer */
-      /*char tag[100] = {0}, data[1500] = {0}, ** pdata;*/
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
       char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata;
       _Bool in_tag = 0;
@@ -26,16 +24,8 @@ void taggem(struct shash* h, struct web_page* w){
 
                         /* current must be set to parent shash */
                         if(tag[0] == '/'){
-                              /*printf("data: \"%s\"\n", data);*/
-                              /* data is on the heap */
-                              /*printf("inserted data: %s\n", data);*/
                               printf("%s: %s\n", tag, data);
                               *pdata = data;
-                              /*
-                               * *pdata = malloc(d_ind);
-                               * memcpy(*pdata, data, d_ind);
-                               * memset(data, 0, d_ind);
-                              */
                               data = calloc(1, d_cap);
                               d_ind = 0;
                               current = current->parent;
@@ -43,9 +33,6 @@ void taggem(struct shash* h, struct web_page* w){
                         }
 
                         /* inserting a tag into current->entries */
-                        /*printf("tag: \"%s\" @ %p\n", tag, (void*)current);*/
-                        /*if(!current)puts("ANTICIPATED");*/
-
                         int bucket = (tag[1])%current->nbux;
                         /* if bucket doesn't exist, create it */
                         if(!current->entries[bucket]){
