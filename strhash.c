@@ -167,12 +167,17 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             }
       }
 
+      #if 0
+      struct shash* hh = h;
       for(int i = 0; i < subcalls; ++i){
             for(int j = 0; j < call_depth[i]; ++j){
+                  hh->entries[hh->];
             }
+            hh = hh->
       }
+      #endif
 
-      #if 0
+      /*#if 0*/
       for(int i = 0; i < subcalls; ++i){
             printf("subcall: %i ind: %i\n", i, call_ind[i]);
             for(int j = 0; j < call_depth[i]; ++j){
@@ -190,5 +195,5 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             hh = e->subhash;
       }
       return e;
-      #endif
+      /*#endif*/
 }
