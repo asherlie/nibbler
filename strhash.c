@@ -131,6 +131,13 @@ _Bool strtoi(const char* str, int* i){
      return 1;
 }
 
+struct sh_entry* grab(struct shash* h, char** path, int n){
+      (void)h;
+      (void)path;
+      (void)n;
+      return NULL;
+}
+
 struct sh_entry* find_entry(struct shash* h, char** path, int n){
       int ind;
 
@@ -160,6 +167,11 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             }
       }
 
+      for(int i = 0; i < subcalls; ++i){
+            for(int j = 0; j < call_depth[i]; ++j){
+            }
+      }
+
       #if 0
       for(int i = 0; i < subcalls; ++i){
             printf("subcall: %i ind: %i\n", i, call_ind[i]);
@@ -167,7 +179,7 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
                   printf("  %s\n", calls[i][j]);
             }
       }
-      #endif
+      /*#endif*/
       struct shash* hh = h;
       struct sh_entry* e;
       for(int i = 0; i < subcalls; ++i){
@@ -178,4 +190,5 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             hh = e->subhash;
       }
       return e;
+      #endif
 }
