@@ -74,31 +74,14 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
 
                         }
 
-                        /* updating current */
-                        /*
-                         * current->entries[bucket]->subhash->parent = current;
-                         * current = current->entries[bucket]->subhash;
-                        */
-
                         pdata = &current->entries[bucket]->last->data;
-                        /*printf("pdata set to: %p\n", pdata);*/
 
+                        /* updating current */
                         current->entries[bucket]->last->subhash->parent = current;
                         current = current->entries[bucket]->last->subhash;
-
-                        /*printf("bucket %i\n", bucket);*/
-                        /*current->entries[];*/
-                        /* tag end */
                   }
             }
             else if(in_tag){
-                  /*
-                   * bad solution - if stripping tags, self contained
-                   * tags aren't noticed
-                   * because everything after the ' ' is stripped,
-                   * including the trailing '/'
-                   */
-                  /*if(strip_tags && tag[t_ind-1] == ' ')continue;*/
                   if(t_ind == t_cap){
                         t_cap *= 2;
                         char* tmp_tag = calloc(1, t_cap);
