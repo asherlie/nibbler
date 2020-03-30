@@ -11,10 +11,6 @@ void init_shash(struct shash* h){
       h->parent = h;
 }
 
-_Bool streq(char* x, char* y){
-      return !strcmp(x, y);
-}
-
 _Bool strtoi(const char* str, int* i){
      char* res;
      unsigned int r = strtol(str, &res, 10);
@@ -79,8 +75,8 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
       struct shash* hh = h;
       struct sh_entry* e = NULL;
       for(int i = 0; i < subcalls; ++i){
-            printf("subcall: %i ind: %i\n", i, call_ind[i]);
             e = grab_singlepass(hh, calls[i], call_depth[i], call_ind[i]);
+            if(!e)return NULL;
             hh = e->subhash;
       }
       return e;

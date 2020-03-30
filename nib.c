@@ -13,8 +13,10 @@ char* strip_ws(char* str){
 }
 
 void test(int a, char** b){
-      FILE* fp = fopen("ex", "r");
-      char ex[1700] = {0};
+      /*FILE* fp = fopen("ex", "r");*/
+      FILE* fp = fopen("hn", "r");
+      /*char ex[1700] = {0};*/
+      char ex[33981] = {0};
       int ind = 0;
       while((ex[ind++] = fgetc(fp)) != EOF);
 
@@ -33,7 +35,8 @@ void test(int a, char** b){
       char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};
       /*struct sh_entry* ee = find_entry(&h, pth, 7);*/
       struct sh_entry* ee = find_entry(&h, b, a);
-      printf("%s: %s\n", ee->tag, ee->data);
+      if(!ee)puts("failed to find entry");
+      else printf("%s: %s\n", ee->tag, ee->data);
       /*struct sh_entry* find_entry(struct shash* h, char** path, int n){*/
 
       /*if(!tag_page(&h, &w))puts("failed to tag");*/
