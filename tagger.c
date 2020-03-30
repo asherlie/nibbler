@@ -4,7 +4,7 @@
 
 #include "tagger.h"
 
-void taggem(struct shash* h, struct web_page* w){
+void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
       char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata;
       _Bool in_tag = 0;
@@ -24,13 +24,25 @@ void taggem(struct shash* h, struct web_page* w){
 
                         /* current must be set to parent shash */
                         if(tag[0] == '/'){
-                              printf("%s: %s\n", tag, data);
-                              *pdata = data;
+                              /*printf("%s: %s\n", tag, data);*/
+                              if(pdata){
+                                    *pdata = data;
+                                    pdata = 0;
+                              }
+                              /*printf("setting %p to (%s)\n", pdata, data);*/
                               data = calloc(1, d_cap);
                               d_ind = 0;
                               current = current->parent;
                               continue;
                         }
+
+                        if(strip_tags){
+                              char* sp = strchr(tag, ' ');
+                              if(sp)*sp = 0;
+                        }
+
+                        if(strip_tags && tag[t_ind-1] == ' ')tag[--t_ind] = 0;
+                        /*printf("tag: %s\n", tag);*/
 
                         /* inserting a tag into current->entries */
                         int bucket = (tag[1])%current->nbux;
@@ -39,6 +51,7 @@ void taggem(struct shash* h, struct web_page* w){
                               current->entries[bucket] = calloc(1, sizeof(struct sh_entry));
                               /*memcpy(current->entries[bucket]->tag, tag, t_ind);*/
                               current->entries[bucket]->tag = tag;
+                              /*printf("(%s) - ", tag);*/
                               tag = calloc(1, t_cap);
                               init_shash(current->entries[bucket]->subhash = malloc(sizeof(struct shash)));
                               current->entries[bucket]->last = current->entries[bucket];
@@ -55,6 +68,7 @@ void taggem(struct shash* h, struct web_page* w){
                               /*current->entries[bucket]->last->next = NULL;*/
                               /*memcpy(current->entries[bucket]->last->tag, tag, t_ind);*/
                               current->entries[bucket]->last->tag = tag;
+                              /*printf("(%s) - ", tag);*/
                               tag = calloc(1, t_cap);
                               init_shash(current->entries[bucket]->last->subhash = malloc(sizeof(struct shash)));
 
@@ -65,7 +79,9 @@ void taggem(struct shash* h, struct web_page* w){
                          * current->entries[bucket]->subhash->parent = current;
                          * current = current->entries[bucket]->subhash;
                         */
+
                         pdata = &current->entries[bucket]->last->data;
+                        /*printf("pdata set to: %p\n", pdata);*/
 
                         current->entries[bucket]->last->subhash->parent = current;
                         current = current->entries[bucket]->last->subhash;
@@ -76,6 +92,13 @@ void taggem(struct shash* h, struct web_page* w){
                   }
             }
             else if(in_tag){
+                  /*
+                   * bad solution - if stripping tags, self contained
+                   * tags aren't noticed
+                   * because everything after the ' ' is stripped,
+                   * including the trailing '/'
+                   */
+                  /*if(strip_tags && tag[t_ind-1] == ' ')continue;*/
                   if(t_ind == t_cap){
                         t_cap *= 2;
                         char* tmp_tag = calloc(1, t_cap);

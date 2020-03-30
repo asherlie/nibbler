@@ -131,12 +131,44 @@ _Bool strtoi(const char* str, int* i){
      return 1;
 }
 
-struct sh_entry* grab(struct shash* h, char** path, int n){
-      (void)h;
-      (void)path;
-      (void)n;
-      return NULL;
+
+/* follows a path of tags, indexes into the last path member */
+struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index){
+      /*struct shash* hh = h;*/
+      int bucket = (*path)[1]%h->nbux;
+      /*printf("bucket = %c mod %i\n", (*path)[1], h->nbux);*/
+      struct sh_entry* e = h->entries[bucket];
+      for(int i = 1; i < n; ++i){
+            bucket = path[i][1]%e->subhash->nbux;
+            /*hh = hh->entries[bucket]->subhash;*/
+            e = e->subhash->entries[bucket];
+            /*if(!e)return NULL;*/
+            /*for(; e->next; e = e->next){*/
+            for(; e; e = e->next){
+                  if(!strcmp(e->tag, path[i]))break;
+            }
+            if(!e)return NULL;
+      }
+
+      int nfound = 0;
+
+      while(e && nfound < index){
+            if(!strcmp(e->tag, path[n-1]))++nfound;
+            e = e->next;
+      }
+
+      /*
+       *for(int i = 0; i < index; ++i)
+       *      e = e->next;
+       */
+      return e;
 }
+
+/*
+ * lowcase example domain
+ * More information...
+ * both don't show up
+ */
 
 struct sh_entry* find_entry(struct shash* h, char** path, int n){
       int ind;
@@ -177,14 +209,21 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
       }
       #endif
 
-      /*#if 0*/
+      struct shash* hh = h;
+      struct sh_entry* e = NULL;
       for(int i = 0; i < subcalls; ++i){
             printf("subcall: %i ind: %i\n", i, call_ind[i]);
-            for(int j = 0; j < call_depth[i]; ++j){
-                  printf("  %s\n", calls[i][j]);
-            }
+            e = grab_singlepass(hh, calls[i], call_depth[i], call_ind[i]);
+            hh = e->subhash;
+            /*
+             *for(int j = 0; j < call_depth[i]; ++j){
+             *      printf("  %s\n", calls[i][j]);
+             *}
+             */
       }
+      return e;
       /*#endif*/
+      #if 0
       struct shash* hh = h;
       struct sh_entry* e;
       for(int i = 0; i < subcalls; ++i){
@@ -195,5 +234,5 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             hh = e->subhash;
       }
       return e;
-      /*#endif*/
+      #endif
 }

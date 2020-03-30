@@ -12,9 +12,9 @@ char* strip_ws(char* str){
       return ret;
 }
 
-void test(){
+void test(int a, char** b){
       FILE* fp = fopen("ex", "r");
-      char ex[1500] = {0};
+      char ex[1700] = {0};
       int ind = 0;
       while((ex[ind++] = fgetc(fp)) != EOF);
 
@@ -22,11 +22,19 @@ void test(){
       w.bytes = 1256;
       w.bytes = 1379;
       w.data = ex;
+      w.bytes = ind;
 
       struct shash h;
       init_shash(&h);
 
-      taggem(&h, &w);
+      taggem(&h, &w, 1);
+
+      /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
+      char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};
+      /*struct sh_entry* ee = find_entry(&h, pth, 7);*/
+      struct sh_entry* ee = find_entry(&h, b, a);
+      printf("%s: %s\n", ee->tag, ee->data);
+      /*struct sh_entry* find_entry(struct shash* h, char** path, int n){*/
 
       /*if(!tag_page(&h, &w))puts("failed to tag");*/
       return;
@@ -71,7 +79,7 @@ void test(){
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
-      test();
+      test(a-1, b+1);
       return 0;
 
       curl_global_init(CURL_GLOBAL_ALL);

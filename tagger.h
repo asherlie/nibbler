@@ -7,5 +7,5 @@ struct web_page;
 
 /* returns 1 on success */
 _Bool tag_page(struct shash* h, struct web_page* w);
-void taggem(struct shash* h, struct web_page* w);
+void taggem(struct shash* h, struct web_page* w, _Bool strip_tags);
 #endif
