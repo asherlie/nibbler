@@ -46,7 +46,7 @@ void* dl_page_pth(void* dla_v){
             break;
       }
 
-      taggem(dla->h, &w);
+      taggem(dla->h, &w, 1);
 
       return NULL;
 }
