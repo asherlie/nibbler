@@ -157,18 +157,8 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
             e = e->next;
       }
 
-      /*
-       *for(int i = 0; i < index; ++i)
-       *      e = e->next;
-       */
       return e;
 }
-
-/*
- * lowcase example domain
- * More information...
- * both don't show up
- */
 
 struct sh_entry* find_entry(struct shash* h, char** path, int n){
       int ind;
@@ -199,40 +189,12 @@ struct sh_entry* find_entry(struct shash* h, char** path, int n){
             }
       }
 
-      #if 0
-      struct shash* hh = h;
-      for(int i = 0; i < subcalls; ++i){
-            for(int j = 0; j < call_depth[i]; ++j){
-                  hh->entries[hh->];
-            }
-            hh = hh->
-      }
-      #endif
-
       struct shash* hh = h;
       struct sh_entry* e = NULL;
       for(int i = 0; i < subcalls; ++i){
             printf("subcall: %i ind: %i\n", i, call_ind[i]);
             e = grab_singlepass(hh, calls[i], call_depth[i], call_ind[i]);
             hh = e->subhash;
-            /*
-             *for(int j = 0; j < call_depth[i]; ++j){
-             *      printf("  %s\n", calls[i][j]);
-             *}
-             */
       }
       return e;
-      /*#endif*/
-      #if 0
-      struct shash* hh = h;
-      struct sh_entry* e;
-      for(int i = 0; i < subcalls; ++i){
-            /*printf("ind_shash(hh, calls[i], )");*/
-            e = ind_shash(hh, calls[i], call_depth[i], call_ind[i]);
-
-            if(!e)return NULL;
-            hh = e->subhash;
-      }
-      return e;
-      #endif
 }
