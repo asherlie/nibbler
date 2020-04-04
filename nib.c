@@ -94,9 +94,9 @@ int main(int a, char** b){
       clock_gettime(CLOCK_MONOTONIC, &st);
 
       int found = 0;
-      struct sh_entry* e;
+      struct sh_entry* e[npages];
       for(int i = 0; i < npages; ++i)
-            found += (_Bool)find_entry(w+i, b+2, a-2);
+            found += (_Bool)(e[i] = find_entry(w+i, b+2, a-2));
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;
@@ -105,7 +105,7 @@ int main(int a, char** b){
       printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       if(!found)puts("didn't find");
-      else printf("%s: %s\n", );
+      else printf("%s: \"%s\"\n", (*e)->tag, (*e)->data);
 
       curl_global_cleanup();
 
