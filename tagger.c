@@ -4,9 +4,10 @@
 
 #include "tagger.h"
 
+/*we must be able to detect invalid html files*/
 void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
-      char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata;
+      char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata = NULL;
       _Bool in_tag = 0;
       struct shash* current = h;
       for(unsigned int i = 0; i < w->bytes; ++i){
@@ -42,6 +43,7 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
                         }
 
                         if(strip_tags && tag[t_ind-1] == ' ')tag[--t_ind] = 0;
+
                         /*printf("tag: %s\n", tag);*/
 
                         /* inserting a tag into current->entries */

@@ -13,8 +13,8 @@ char* strip_ws(char* str){
 }
 
 void test(int a, char** b){
-      /*FILE* fp = fopen("ex", "r");*/
-      FILE* fp = fopen("hn", "r");
+      FILE* fp = fopen("ex", "r");
+      /*FILE* fp = fopen("hn", "r");*/
       /*char ex[1700] = {0};*/
       char ex[33981] = {0};
       int ind = 0;
@@ -32,43 +32,11 @@ void test(int a, char** b){
       taggem(&h, &w, 1);
 
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
-      char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};
+      /*char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};*/
       /*struct sh_entry* ee = find_entry(&h, pth, 7);*/
       struct sh_entry* ee = find_entry(&h, b, a);
       if(!ee)puts("failed to find entry");
       else printf("%s: %s\n", ee->tag, ee->data);
-      /*struct sh_entry* find_entry(struct shash* h, char** path, int n){*/
-
-      /*if(!tag_page(&h, &w))puts("failed to tag");*/
-      return;
-
-
-      struct sh_entry* e;
-
-      {
-      char* path[] = {"html", "head", "title"};
-
-      if(!(e = ind_shash(&h, path, 3, 0)))puts("failed to find hh");
-      else printf("tag 0: %s, data: %s\n", e->tag, strip_ws(e->data));
-      }
-
-      {
-      char* path[] = {"html", "body", "div", "h1"};
-
-      /*
-       * fix all mem leaks, dynamically allocate cur_path
-       * data in strhash.h should be a char* that's dynamically alloc'd
-      */
-
-      if(!(e = ind_shash(&h, path, 4, 1)))puts("failed to find hb");
-      else printf("tag 1: %s, data: %s\n", e->tag, strip_ws(e->data));
-      }
-
-      {
-      char* path[] = {"html", "body", "div", "div", "0", "h1"};
-      if(!(e = find_entry(&h, path, 6)))puts("failed to find zz");
-      else printf("tag 2: %s, data: %s\n", e->tag, strip_ws(e->data));
-      }
 }
 
 /* TODO:
@@ -82,19 +50,23 @@ void test(int a, char** b){
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
-      test(a-1, b+1);
-      return 0;
+      /*
+       * test(a-1, b+1);
+       * return 0;
+      */
+
+      if(a < 2)return EXIT_FAILURE;
 
       curl_global_init(CURL_GLOBAL_ALL);
 
-      int npages = 1;
+      int npages = 10;
 
       char* pages[npages];
       memset(pages, 0, npages);
 
-      char ex[] = "example.com";
+      /*char ex[] = "example.com";*/
       for(int i = 0; i < npages; ++i)
-            pages[i] = ex;
+            pages[i] = b[1];
       /*
        * use of clock() was giving inaccurate timings due to multiple threads using more
        * cpu time at once
@@ -102,7 +74,7 @@ int main(int a, char** b){
       printf("attempting to download %i pages\n", npages);
       struct timespec st, fin;
       clock_gettime(CLOCK_MONOTONIC, &st);
-      struct shash* w = dl_pages(pages, npages, 1);
+      struct shash* w = dl_pages(pages, npages, 100);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el0 = fin.tv_sec - st.tv_sec;
@@ -117,13 +89,14 @@ int main(int a, char** b){
       printf("dl and tagging took %lf with %i retries\n", el0, tries);
       printf("%i/%i malformed pages\n", failures, npages);
 
-      if(a < 2)return 0;
+      if(a < 3)return 0;
 
       clock_gettime(CLOCK_MONOTONIC, &st);
 
       int found = 0;
+      struct sh_entry* e;
       for(int i = 0; i < npages; ++i)
-            found += (_Bool)ind_shash(w+i, b+1, a-1, 0);
+            found += (_Bool)find_entry(w+i, b+2, a-2);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;
@@ -132,7 +105,7 @@ int main(int a, char** b){
       printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       if(!found)puts("didn't find");
-      else puts("found");
+      else printf("%s: %s\n", );
 
       curl_global_cleanup();
 
