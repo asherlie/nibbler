@@ -22,14 +22,23 @@ _Bool strtoi(const char* str, int* i){
 
 /* follows a path of tags, indexes into the last path member */
 struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index){
-      int bucket = (*path)[1]%h->nbux;
-      struct sh_entry* e = h->entries[bucket];
-      for(int i = 1; i < n; ++i){
-            bucket = path[i][1]%e->subhash->nbux;
+      /*
+       *int bucket = (*path)[1]%h->nbux;
+       *oops - on the first entry we don't do a strcmp
+       */
+      /*int bucket;*/
+      /*struct sh_entry* e = h->entries[bucket];*/
+      /* creating a spoof entry with h as subhash */
+      struct sh_entry E;
+      E.subhash = h;
+      struct sh_entry* e = &E;
+      for(int i = 0; i < n; ++i){
+            int bucket = path[i][1]%e->subhash->nbux;
             e = e->subhash->entries[bucket];
             for(; e; e = e->next){
                   if(!strcmp(e->tag, path[i]))break;
             }
+            /*printf("returned: %p\n", (void*)e);*/
             if(!e)return NULL;
       }
 
