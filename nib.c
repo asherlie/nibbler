@@ -13,7 +13,8 @@ char* strip_ws(char* str){
 }
 
 void test(int a, char** b){
-      FILE* fp = fopen("ex", "r");
+      /*FILE* fp = fopen("ex", "r");*/
+      FILE* fp = fopen("mal", "r");
       /*FILE* fp = fopen("hn", "r");*/
       /*char ex[1700] = {0};*/
       char ex[33981] = {0};
@@ -39,6 +40,14 @@ void test(int a, char** b){
       else printf("%s: %s\n", ee->tag, ee->data);
 }
 
+/*
+ *prints all data entries next to their full paths
+ *helpful for finding patterns
+ */
+void all_paths_to_data(struct shash* h){
+      (void)h;
+}
+
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
  */
@@ -51,9 +60,9 @@ void test(int a, char** b){
  */
 int main(int a, char** b){
       /*
-       * test(a-1, b+1);
-       * return 0;
-      */
+       *test(a-1, b+1);
+       *return 0;
+       */
 
       if(a < 2)return EXIT_FAILURE;
 
@@ -104,8 +113,15 @@ int main(int a, char** b){
 
       printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
-      if(!found)puts("didn't find");
-      else printf("%s: \"%s\"\n", (*e)->tag, (*e)->data);
+      for(int i = 0; i < npages; ++i){
+            printf("%i: ", i);
+            if(!e[i])puts("not found");
+            else printf("%s: \"%s\"\n", e[i]->tag, e[i]->data);
+      }
+      /*
+       *if(!found)puts("didn't find");
+       *else printf("%s: \"%s\"\n", (*e)->tag, (*e)->data);
+       */
 
       curl_global_cleanup();
 
