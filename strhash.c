@@ -36,7 +36,8 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
             int bucket = path[i][1]%e->subhash->nbux;
             e = e->subhash->entries[bucket];
             for(; e; e = e->next){
-                  if(!strcmp(e->tag, path[i]))break;
+                  printf("comparing %s %s: %i\n", e->tag, path[i], strcasecmp(e->tag, path[i]));
+                  if(!strcasecmp(e->tag, path[i]))break;
             }
             /*printf("returned: %p\n", (void*)e);*/
             if(!e)return NULL;
@@ -45,7 +46,7 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
       int nfound = 0;
 
       while(e && nfound < index){
-            if(!strcmp(e->tag, path[n-1]))++nfound;
+            if(!strcasecmp(e->tag, path[n-1]))++nfound;
             e = e->next;
       }
 

@@ -9,7 +9,7 @@
  * as of now they are NOT supported
  */ 
 /*we must be able to detect invalid html files*/
-void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
+void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
       char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata = NULL;
       _Bool in_tag = 0;
@@ -51,7 +51,8 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
                         /*printf("tag: %s\n", tag);*/
 
                         /* inserting a tag into current->entries */
-                        int bucket = (tag[1])%current->nbux;
+                        /*int bucket = (tag[1])%current->nbux;*/
+                        int bucket = ((enforce_lowcase && (tag[1] >= 'A' && tag[1] <= 'Z')) ? tag[1]+32 : tag[1])%current->nbux;
                         /* if bucket doesn't exist, create it */
                         if(!current->entries[bucket]){
                               current->entries[bucket] = calloc(1, sizeof(struct sh_entry));

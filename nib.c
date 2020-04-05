@@ -30,7 +30,7 @@ void test(int a, char** b){
       struct shash h;
       init_shash(&h);
 
-      taggem(&h, &w, 1);
+      taggem(&h, &w, 1, 1);
 
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
       /*char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};*/

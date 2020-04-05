@@ -10,6 +10,7 @@
 
 static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
       size_t _sz = sz*mems;
+      printf("psize: %zu\n", _sz);
       struct web_page* web = (struct web_page*)ptr;
 
       web->data = malloc(_sz+1);
@@ -46,7 +47,7 @@ void* dl_page_pth(void* dla_v){
             break;
       }
 
-      taggem(dla->h, &w, 1);
+      taggem(dla->h, &w, 1, 1);
 
       return NULL;
 }
