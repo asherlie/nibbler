@@ -4,6 +4,10 @@
 
 #include "tagger.h"
 
+/* TODO: add support for self closing tags without slashes at the end
+ * list here: http://xahlee.info/js/html5_non-closing_tag.html
+ * as of now they are NOT supported
+ */ 
 /*we must be able to detect invalid html files*/
 void taggem(struct shash* h, struct web_page* w, _Bool strip_tags){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
