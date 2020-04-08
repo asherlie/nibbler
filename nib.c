@@ -12,10 +12,30 @@ char* strip_ws(char* str){
       return ret;
 }
 
+/*
+ *we can have a function that calls print()
+ *that sets up an arg print takes for the list of tags we're in
+ */
+
+void print(struct sh_entry* e){
+      if(!e)return;
+      if(e->data)printf("%s: \"%s\"\n", e->tag, e->data);
+      else printf("%s, ", e->tag);
+      if(e->next)print(e->next);
+      for(int i = 0; i < e->subhash->nbux; ++i){
+            print(e->subhash->entries[i]);
+      }
+      /*
+       *if(e->subhash->entries[])
+       *print(e->subhash);
+       */
+}
+
 void test(int a, char** b){
       /*FILE* fp = fopen("ex", "r");*/
-      FILE* fp = fopen("mal", "r");
-      /*FILE* fp = fopen("hn", "r");*/
+      /*FILE* fp = fopen("x", "r");*/
+      /*FILE* fp = fopen("mal", "r");*/
+      FILE* fp = fopen("hn", "r");
       /*char ex[1700] = {0};*/
       char ex[33981] = {0};
       int ind = 0;
@@ -32,6 +52,10 @@ void test(int a, char** b){
 
       taggem(&h, &w, 1, 1);
 
+      struct sh_entry E;
+      E.subhash = &h;
+      print(&E);
+
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
       /*char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};*/
       /*struct sh_entry* ee = find_entry(&h, pth, 7);*/
@@ -44,9 +68,13 @@ void test(int a, char** b){
  *prints all data entries next to their full paths
  *helpful for finding patterns
  */
-void all_paths_to_data(struct shash* h){
-      (void)h;
-}
+/*
+ *void all_paths_to_data(struct shash* h){
+ *      struct shash* hh = h;
+ *      [>if(h-><]
+ *      hh->entries[i]->subhash;
+ *}
+ */
 
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
@@ -59,10 +87,8 @@ void all_paths_to_data(struct shash* h){
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
-      /*
-       *test(a-1, b+1);
-       *return 0;
-       */
+      test(a-1, b+1);
+      return 0;
 
       if(a < 2)return EXIT_FAILURE;
 
