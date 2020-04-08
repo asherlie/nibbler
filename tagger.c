@@ -5,7 +5,22 @@
 #include "tagger.h"
 
 _Bool self_closing(char* tag){
-      return !tag;
+            if(!strcasecmp(tag, "hr"))puts("found hr");
+      return
+            !strcasecmp(tag, "area") ||
+            !strcasecmp(tag, "base") ||
+            !strcasecmp(tag, "br") ||
+            !strcasecmp(tag, "col") ||
+            !strcasecmp(tag, "embed") ||
+            !strcasecmp(tag, "hr") ||
+            !strcasecmp(tag, "img") ||
+            !strcasecmp(tag, "input") ||
+            !strcasecmp(tag, "link") ||
+            !strcasecmp(tag, "meta") ||
+            !strcasecmp(tag, "param") ||
+            !strcasecmp(tag, "source") ||
+            !strcasecmp(tag, "track") ||
+            !strcasecmp(tag, "wbr");
 }
 
 /* TODO: add support for self closing tags without slashes at the end
@@ -29,7 +44,10 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
             else if(c == '>'){
                   if(in_tag){
                         in_tag = 0;
-                        if(tag[0] == '!' || tag[t_ind-1] == '/' || self_closing(tag))continue;
+                        /* we separate this from self_closing() because these checks
+                         * do not require stripped tags
+                         */
+                        if(tag[0] == '!' || tag[t_ind-1] == '/')continue;
 
                         /* current must be set to parent shash */
                         if(tag[0] == '/'){
@@ -51,6 +69,8 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                         }
 
                         if(strip_tags && tag[t_ind-1] == ' ')tag[--t_ind] = 0;
+
+                        if(self_closing(tag))continue;
 
                         /*printf("tag: %s\n", tag);*/
 
