@@ -5,7 +5,6 @@
 #include "tagger.h"
 
 _Bool self_closing(char* tag){
-            if(!strcasecmp(tag, "hr"))puts("found hr");
       return
             !strcasecmp(tag, "area") ||
             !strcasecmp(tag, "base") ||
