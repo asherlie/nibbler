@@ -17,6 +17,19 @@ char* strip_ws(char* str){
  *that sets up an arg print takes for the list of tags we're in
  */
 
+void sprint(struct sh_entry* e, char** path, int depth){
+      int _depth = depth;
+      if(!e)return;
+      if(e->data){
+            for(int i = 0; i < depth; ++i)printf("\"%s\", ", path[i]);
+            printf("\"%s\": \"%s\"\n", e->tag, e->data);
+      }
+      else path[_depth++] = e->tag;
+      if(e->next)sprint(e->next, path, _depth);
+      for(int i = 0; i < e->subhash->nbux; ++i){
+            sprint(e->subhash->entries[i], path, _depth);
+      }
+}
 void print(struct sh_entry* e){
       if(!e)return;
       if(e->data)printf("%s: \"%s\"\n", e->tag, e->data);
@@ -33,9 +46,10 @@ void print(struct sh_entry* e){
 
 void test(int a, char** b){
       /*FILE* fp = fopen("ex", "r");*/
+      FILE* fp = fopen("fog", "r");
       /*FILE* fp = fopen("x", "r");*/
       /*FILE* fp = fopen("mal", "r");*/
-      FILE* fp = fopen("hn", "r");
+      /*FILE* fp = fopen("hn", "r");*/
       /*char ex[1700] = {0};*/
       char ex[33981] = {0};
       int ind = 0;
@@ -54,7 +68,9 @@ void test(int a, char** b){
 
       struct sh_entry E;
       E.subhash = &h;
-      print(&E);
+      char* buf[1000];
+      sprint(&E, buf, 0);
+      /*print(&E);*/
 
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
       /*char* pth[] = {"html", "body", "div", "p", "1", "a", "0"};*/
