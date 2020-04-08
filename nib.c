@@ -17,7 +17,7 @@ char* strip_ws(char* str){
  *that sets up an arg print takes for the list of tags we're in
  */
 
-void sprint(struct sh_entry* e, char** path, int depth, int index, int ip){
+void _find_paths(struct sh_entry* e, char** path, int depth, int index, int ip){
       if(!e)return;
       int _depth = depth;
       if(e->data){
@@ -31,13 +31,19 @@ void sprint(struct sh_entry* e, char** path, int depth, int index, int ip){
             printf("\"%s\": \"%s\"\n", e->tag, e->data);
       }
       else path[_depth++] = e->tag;
-      /*if(e->next)sprint(e->next, path, _depth, index, ip);*/
-      if(e->next)sprint(e->next, path, _depth, index+1, ip);
+      if(e->next)_find_paths(e->next, path, _depth, index+1, ip);
       for(int i = 0; i < e->subhash->nbux; ++i){
-            /*sprint(e->subhash->entries[i], path, _depth, i, _depth-1);*/
-            /*sprint(e->subhash->entries[i], path, _depth, index, ip+1);*/
-            sprint(e->subhash->entries[i], path, _depth, index, ip+1);
+            _find_paths(e->subhash->entries[i], path, _depth, index, ip+1);
       }
+}
+void find_paths(struct shash* h){
+      char* buf[1000];
+      struct sh_entry E;
+      E.data = 0;
+      char s_tag[] = "**BEGIN**";
+      E.tag = s_tag;
+      E.subhash = h;
+      _find_paths(&E, buf, 0, 0, 0);
 }
 void print(struct sh_entry* e){
       if(!e)return;
@@ -75,10 +81,7 @@ void test(int a, char** b){
 
       taggem(&h, &w, 1, 1);
 
-      struct sh_entry E;
-      E.subhash = &h;
-      char* buf[1000];
-      sprint(&E, buf, 0, 0, 0);
+      find_paths(&h);
       /*print(&E);*/
 
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
