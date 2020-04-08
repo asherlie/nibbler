@@ -4,6 +4,10 @@
 
 #include "tagger.h"
 
+_Bool self_closing(char* tag){
+      return !tag;
+}
+
 /* TODO: add support for self closing tags without slashes at the end
  * list here: http://xahlee.info/js/html5_non-closing_tag.html
  * as of now they are NOT supported
@@ -25,7 +29,7 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
             else if(c == '>'){
                   if(in_tag){
                         in_tag = 0;
-                        if(tag[0] == '!' || tag[t_ind-1] == '/')continue;
+                        if(tag[0] == '!' || tag[t_ind-1] == '/' || self_closing(tag))continue;
 
                         /* current must be set to parent shash */
                         if(tag[0] == '/'){
