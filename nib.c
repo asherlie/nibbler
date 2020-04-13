@@ -159,7 +159,7 @@ int main(int a, char** b){
 
       curl_global_init(CURL_GLOBAL_ALL);
 
-      int npages = 10;
+      int npages = 1;
 
       char* pages[npages];
       memset(pages, 0, npages);
@@ -189,7 +189,10 @@ int main(int a, char** b){
       printf("dl and tagging took %lf with %i retries\n", el0, tries);
       printf("%i/%i malformed pages\n", failures, npages);
 
-      if(a < 3)return 0;
+      if(a < 3){
+            recfp(w);
+            return 0;
+      }
 
       clock_gettime(CLOCK_MONOTONIC, &st);
 
