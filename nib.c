@@ -12,6 +12,95 @@ char* strip_ws(char* str){
       return ret;
 }
 
+struct index_tracker{
+      int index, index_pos;
+};
+
+/*void _recfp(struct sh_entry* e, char** path, int depth, int index, int index_pos){*/
+void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it, int it_sz){
+      if(!e)return;
+      int _depth = depth, _it_sz = it_sz;
+      /*_Bool ident = !strcasecmp(e->nex);*/
+      path[_depth++] = e->tag;
+      if(e->next){
+            _Bool ident = /*!e->data &&*/ !strcasecmp(e->next->tag, path[_depth-1]);
+            /*_recfp(e->next, path, _depth-ident, index+ident, index_pos);*/
+            if(ident){
+                  /*it[_it_sz].index = it[_it_sz-1].index;*/
+                  /* increment current index if we're doing some nice iteration */
+                  ++it[_it_sz-1].index;
+                  _recfp(e->next, path, _depth-ident, it, _it_sz);
+                  --it[_it_sz-1].index;
+            }
+
+            /* if the index counting for this subpath is done
+             * we're going to get started on our next index of it
+             */
+            else{
+                  /* we're assuming that it is already zeroed so
+                   * index, index_pos will be 0, 0
+                   */
+                  /*_recfp(e->next, path, _depth-ident, it, ++_it_sz);*/
+                  _recfp(e->next, path, _depth-ident, it, _it_sz+1);
+            }
+
+            /*_depth -= ident;*/
+      }
+      /* if the index counting for this subpath is done */
+      else if(it[_it_sz-1].index){
+      /*else{*/
+            /* ? */
+            ++_it_sz;
+      }
+      for(int i = 0; i < e->subhash->nbux; ++i){
+            /*_recfp(e->subhash->entries[i], path, _depth, index, index_pos+1);*/
+            if(e->subhash->entries[i])++it[_it_sz-1].index_pos;
+            _recfp(e->subhash->entries[i], path, _depth, it, _it_sz);
+            if(e->subhash->entries[i])--it[_it_sz-1].index_pos;
+            /*--it[_it_sz-1].index_pos;*/
+      }
+      /*return;*/
+      /*ip is always off by one - if */
+      if(e->data){
+            for(int i = 0; i < _it_sz; ++i){
+                  printf("IT: %i %i - ", it[i].index, it[i].index_pos);
+            }
+            puts("");
+            int it_ind = 0;
+            /*for(int i = 0; i < _depth; ++i){*/
+            for(int i = 0; i < depth; ++i){
+                  /*printf("%i == %i\n", i, it[it_ind].index_pos);*/
+                  printf("%s, ", path[i]);
+                  if(i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);
+            }
+            printf(": %s\n", e->data);
+      }
+      #if !1
+      if(e->data){
+            int _ip = index_pos + (_Bool)index;
+            /*if(index)++_ip;*/
+            printf("(");
+            /*for(int i = 0; i < index_pos; ++i)printf("%s, ", path[i]);*/
+            for(int i = 0; i < _ip; ++i)printf("%s, ", path[i]);
+            if(index)printf("%i, ", index);
+            for(int i = _ip; i < _depth; ++i)printf("%s, ", path[i]);
+            printf("%s): \"%s\"\n", path[_depth-1], e->data);
+      }
+      #endif
+}
+
+void recfp(struct shash* h){
+      struct sh_entry E;
+      E.subhash = h;
+      char start[] = "BEGIN";
+      E.data = NULL;
+      E.tag = start;
+      char* buf[1000];
+      struct index_tracker it[1000] = {0};
+      _recfp(&E, buf, 0, it, 0);
+      return;
+}
+
 /*
  *we can have a function that calls print()
  *that sets up an arg print takes for the list of tags we're in
@@ -23,17 +112,48 @@ void _find_paths(struct sh_entry* e, char** path, int depth, int index, int ip){
       if(e->data){
             /*for(int i = 0; i < depth-ip; ++i)printf("\"%s\", ", path[i]);*/
             /*printf("%i -> %i\n", 0, ip);*/
-            for(int i = 0; i < ip; ++i)printf("\"%s\", ", path[i]);
+            printf("(");
+            /*for(int i = 0; i < ip; ++i)printf("\"%s\", ", path[i]);*/
+            for(int i = 0; i < ip; ++i)printf("%s, ", path[i]);
             if(index)printf("%i, ", index);
             /*printf("%i -> %i\n", ip, depth);*/
-            for(int i = ip; i < depth; ++i)printf("\"%s\", ", path[i]);
+            for(int i = ip; i < depth; ++i)printf("%s, ", path[i]);
             /*for(int i = 0; i < depth; ++i)printf("\"%s\", ", path[i]);*/
-            printf("\"%s\": \"%s\"\n", e->tag, e->data);
+            /*printf("\"%s\": \"%s\"\n", e->tag, e->data);*/
+            printf("%s): \"%s\"\n", e->tag, e->data);
+            /* yeah? */
+            /*return;*/
       }
+      /*
+       * many repeats are added because with each ->next we also add to path
+       * even though it's the same tag
+       * but wait sometimes it's not the same tag
+       * it's just in the same second char bucket
+       *
+       * we could call _find_paths() with _depth-1 if our new path is ident to old
+       */
+      /*for some reason index or ip is -1*/
       else path[_depth++] = e->tag;
-      if(e->next)_find_paths(e->next, path, _depth, index+1, ip);
+      /*if(e->next)_find_paths(e->next, path, _depth, index+1, ip);*/
+      /*_Bool ident = !e->data && !strcasecmp(path[_depth-1], path[_depth-2]);*/
+      if(e->next){
+            /* if e->next is the same string, index is incremented */
+            /*_Bool ident = !e->data && !strcasecmp(path[_depth-1], path[_depth-2]);*/
+            _Bool ident = /*!e->data && */!strcasecmp(e->next->tag, path[_depth-1]);
+            /*_find_paths(e->next, path, depth-ident, index+ident, ip);*/
+            _find_paths(e->next, path, _depth-ident, index+ident, ip);
+            /*
+             *int adj_d = _depth-ident;
+             *int adj_index = index+ident;
+             *_find_paths(e->next, path, adj_d, adj_index, ip);
+             */
+      }
       for(int i = 0; i < e->subhash->nbux; ++i){
+            /*_find_paths(e->subhash->entries[i], path, _depth, index, ip+1);*/
+            /*_find_paths(e->subhash->entries[i], path, _depth, index, ip+1);*/
+            /*if(!i)ip += 1;*/
             _find_paths(e->subhash->entries[i], path, _depth, index, ip+1);
+            /*_find_paths(e->subhash->entries[i], path, _depth-ident, index+ident, ip+1);*/
       }
 }
 void find_paths(struct shash* h){
@@ -43,6 +163,7 @@ void find_paths(struct shash* h){
       char s_tag[] = "**BEGIN**";
       E.tag = s_tag;
       E.subhash = h;
+      /*_find_paths(&E, buf, 0, 1, 1);*/
       _find_paths(&E, buf, 0, 0, 0);
 }
 void print(struct sh_entry* e){
@@ -61,9 +182,9 @@ void print(struct sh_entry* e){
 
 void test(int a, char** b){
       /*FILE* fp = fopen("ex", "r");*/
-      FILE* fp = fopen("fog", "r");
+      /*FILE* fp = fopen("fog", "r");*/
       /*FILE* fp = fopen("x", "r");*/
-      /*FILE* fp = fopen("mal", "r");*/
+      FILE* fp = fopen("ash", "r");
       /*FILE* fp = fopen("hn", "r");*/
       /*char ex[1700] = {0};*/
       char ex[33981] = {0};
@@ -81,7 +202,9 @@ void test(int a, char** b){
 
       taggem(&h, &w, 1, 1);
 
-      find_paths(&h);
+      recfp(&h);
+
+      /*find_paths(&h);*/
       /*print(&E);*/
 
       /*char* pth[] = {"html", "body", "div", "h1", "1"};*/
