@@ -62,17 +62,22 @@ void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it
       /*return;*/
       /*ip is always off by one - if */
       if(e->data){
-            for(int i = 0; i < _it_sz; ++i){
-                  printf("IT: %i %i - ", it[i].index, it[i].index_pos);
-            }
-            puts("");
+            /*
+             *for(int i = 0; i < _it_sz; ++i){
+             *      printf("IT: %i %i - ", it[i].index, it[i].index_pos);
+             *}
+             *puts("");
+             */
             int it_ind = 0;
             /*for(int i = 0; i < _depth; ++i){*/
             for(int i = 0; i < depth; ++i){
                   /*printf("%i == %i\n", i, it[it_ind].index_pos);*/
                   printf("%s, ", path[i]);
-                  if(i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);
+                  if(it[it_ind].index && i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);
             }
+            printf("%s", e->tag);
+            if(it[it_ind].index && depth == it[it_ind].index_pos)printf(", %i", it[it_ind].index);
+            /*printf("%s: %s\n", e->tag, e->data);*/
             printf(": %s\n", e->data);
       }
       #if !1
