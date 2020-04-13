@@ -138,18 +138,6 @@ void test(int a, char** b){
       else printf("%s: %s\n", ee->tag, ee->data);
 }
 
-/*
- *prints all data entries next to their full paths
- *helpful for finding patterns
- */
-/*
- *void all_paths_to_data(struct shash* h){
- *      struct shash* hh = h;
- *      [>if(h-><]
- *      hh->entries[i]->subhash;
- *}
- */
-
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
  */
