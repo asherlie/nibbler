@@ -74,27 +74,30 @@ void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it
             int it_ind = 0;
             int ip_sum = it[it_ind].index_pos;
             /*for(int i = 0; i < _depth; ++i){*/
+            printf("(");
             for(int i = 0; i < depth; ++i){
                   /*printf("%i == %i\n", i, it[it_ind].index_pos);*/
-                  printf("%s, ", path[i]);
+                  /*printf("%s, ", path[i]);*/
+                  printf("%s ", path[i]);
                   /*if(it[it_ind].index && i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);*/
                   if(it[it_ind].index && i == ip_sum){
-                        printf("%i, ", it[it_ind++].index);
+                        /*printf("%i, ", it[it_ind++].index);*/
+                        printf("%i ", it[it_ind++].index);
                         ip_sum += it[it_ind].index_pos;
                   }
             }
             printf("%s", e->tag);
-            /*if(it[it_ind].index && depth == it[it_ind].index_pos)printf(", %i", it[it_ind].index);*/
-            if(it[it_ind].index && depth == ip_sum)printf(", %i", it[it_ind].index);
+            if(it[it_ind].index && depth == ip_sum)printf(" %i", it[it_ind].index);
+            /*if(it[it_ind].index && depth == ip_sum)printf(", %i", it[it_ind].index);*/
             /*printf("%s: %s\n", e->tag, e->data);*/
-            printf(": %s\n", e->data);
+            printf("): \"%s\"\n", e->data);
       }
 }
 
 void recfp(struct shash* h){
       struct sh_entry E;
       E.subhash = h;
-      char start[] = "BEGIN";
+      char start[] = "**BEGIN**";
       E.data = NULL;
       E.tag = start;
       char* buf[1000];
