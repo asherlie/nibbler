@@ -63,35 +63,32 @@ void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it
       /*ip is always off by one - if */
       if(e->data){
             /*
+             *int sum = 0;
              *for(int i = 0; i < _it_sz; ++i){
-             *      printf("IT: %i %i - ", it[i].index, it[i].index_pos);
+             *      sum += it[i].index_pos;
+             *      [>printf("IT: %i %i - ", it[i].index, it[i].index_pos);<]
+             *      printf("IT[%i]: %i %i - ", i, it[i].index, sum);
              *}
              *puts("");
              */
             int it_ind = 0;
+            int ip_sum = it[it_ind].index_pos;
             /*for(int i = 0; i < _depth; ++i){*/
             for(int i = 0; i < depth; ++i){
                   /*printf("%i == %i\n", i, it[it_ind].index_pos);*/
                   printf("%s, ", path[i]);
-                  if(it[it_ind].index && i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);
+                  /*if(it[it_ind].index && i == it[it_ind].index_pos)printf("%i, ", it[it_ind++].index);*/
+                  if(it[it_ind].index && i == ip_sum){
+                        printf("%i, ", it[it_ind++].index);
+                        ip_sum += it[it_ind].index_pos;
+                  }
             }
             printf("%s", e->tag);
-            if(it[it_ind].index && depth == it[it_ind].index_pos)printf(", %i", it[it_ind].index);
+            /*if(it[it_ind].index && depth == it[it_ind].index_pos)printf(", %i", it[it_ind].index);*/
+            if(it[it_ind].index && depth == ip_sum)printf(", %i", it[it_ind].index);
             /*printf("%s: %s\n", e->tag, e->data);*/
             printf(": %s\n", e->data);
       }
-      #if !1
-      if(e->data){
-            int _ip = index_pos + (_Bool)index;
-            /*if(index)++_ip;*/
-            printf("(");
-            /*for(int i = 0; i < index_pos; ++i)printf("%s, ", path[i]);*/
-            for(int i = 0; i < _ip; ++i)printf("%s, ", path[i]);
-            if(index)printf("%i, ", index);
-            for(int i = _ip; i < _depth; ++i)printf("%s, ", path[i]);
-            printf("%s): \"%s\"\n", path[_depth-1], e->data);
-      }
-      #endif
 }
 
 void recfp(struct shash* h){
