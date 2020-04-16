@@ -6,7 +6,7 @@
 
 struct web_page{
       char* data;
-      size_t bytes;
+      size_t bytes, cap;
 };
 
 struct dl_arg{
