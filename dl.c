@@ -9,6 +9,22 @@
 /*#include "tagger.h"*/
 
 static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
+      struct web_page* w = (struct web_page*)ptr;
+      size_t _sz = sz*mems;
+      /*int bufsz = (_sz > w->bytes*2) ? _sz : w->bytes*2;*/
+      if(_sz+w->bytes >= w->cap){
+            w->cap = w->cap*2 + _sz + 1;
+            w->data = realloc(w->data, w->cap);
+      }
+      memcpy(w->data+w->bytes+1, data, _sz);
+      (w->data+w->bytes+1)[_sz] = 0;
+      w->bytes += _sz;
+      return _sz;
+}
+
+/*data needs to be expanded on, bytes incremented*/
+#if 0
+static size_t brite_mem(void* data, size_t sz, size_t mems, void* ptr){
       size_t _sz = sz*mems;
       printf("psize: %zu\n", _sz);
       struct web_page* web = (struct web_page*)ptr;
@@ -19,11 +35,23 @@ static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
       web->data[_sz] = 0;
       return _sz;
 }
+#endif
+
+void init_wp(struct web_page* w){
+      w->bytes = 0;
+      w->cap = 500;
+      w->data = calloc(1, w->cap);
+}
 
 /* TODO: this should possibly also tag pages */
+/*
+ *honestly i think that a bunch of segments are being dl'd
+ *when summed they're about the size of the proper page
+ */
 void* dl_page_pth(void* dla_v){
       struct dl_arg* dla = (struct dl_arg*)dla_v;
       struct web_page w;
+      init_wp(&w);
       CURL* c = curl_easy_init();
 
       int tries = 0;
@@ -37,6 +65,7 @@ void* dl_page_pth(void* dla_v){
             if(ret != CURLE_OK){
                   if(dla->retries > tries++){
                         ++dla->h->retries_used;
+                        puts("contining'");
                         continue;
                   }
                   dla->h->entries = NULL;
@@ -47,6 +76,8 @@ void* dl_page_pth(void* dla_v){
             break;
       }
 
+      printf("data: \"%s\" @ %zu, %zu", w.data, w.bytes, w.cap);
+      puts(w.data);
       taggem(dla->h, &w, 1, 1);
 
       return NULL;
