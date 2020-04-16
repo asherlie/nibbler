@@ -100,8 +100,9 @@ void recfp(struct shash* h){
       char start[] = "**BEGIN**";
       E.data = NULL;
       E.tag = start;
-      char* buf[1000];
-      struct index_tracker it[1000] = {0};
+      E.next = NULL;
+      char* buf[10000];
+      struct index_tracker it[10000] = {0};
       _recfp(&E, buf, 0, it, 0);
       return;
 }
@@ -152,8 +153,10 @@ void test(int a, char** b){
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
-      test(a-1, b+1);
-      return 0;
+      /*
+       *test(a-1, b+1);
+       *return 0;
+       */
 
       if(a < 2)return EXIT_FAILURE;
 
@@ -212,6 +215,11 @@ int main(int a, char** b){
             if(!e[i])puts("not found");
             else printf("%s: \"%s\"\n", e[i]->tag, e[i]->data);
       }
+      /*
+       *struct shash h;
+       *h.entries = e;
+       *recfp(&h);
+       */
       /*
        *if(!found)puts("didn't find");
        *else printf("%s: \"%s\"\n", (*e)->tag, (*e)->data);
