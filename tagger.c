@@ -52,6 +52,13 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                         if(tag[0] == '/'){
                               /*printf("%s: %s\n", tag, data);*/
                               if(pdata){
+                                    #if !1
+                                    for some reason data is empty string when title is added
+                                    for https://en.wikipedia.org/wiki/Shor%27s_algorithm
+                                    title should be "Shor's algorithm - Wikipedia"
+                                    printf("set title of \"%s\" to: \"%s\"\n", tag, data);
+                                    #endif
+                                    /*if(data[0] == 'S' && data[17] == '-')puts("FOOO");*/
                                     *pdata = data;
                                     pdata = 0;
                               }
@@ -86,13 +93,37 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                               init_shash(current->entries[bucket]->subhash = malloc(sizeof(struct shash)));
                               current->entries[bucket]->last = current->entries[bucket];
                               current->entries[bucket]->last->next = NULL;
+
+                              /* ??? */
+                              pdata = &current->entries[bucket]->data;
+                              current->entries[bucket]->subhash->parent = current;
+                              current = current->entries[bucket]->subhash;
                               /*current->last = current->entries[bucket];*/
                               /*current->entries[bucket]->subhash->last = ;*/
                               /*current->entries[bucket]->subhash->*/
                         }
                         /* otherwise, insert in back of LL */
+                        /*
+                         *ok don't put it in back - it really should go in the entry
+                         *with the proper tag IF IT EVEN EXISTS
+                         */
                         else{
                               /* abstract this */
+                              // how do we handle indices [0] :)
+                              struct sh_entry* last_tag = NULL;
+                              for(struct sh_entry* sh = current->entries[bucket]; sh; sh = sh->next){
+                                    if(!strcasecmp(sh->tag, tag)){
+                                        last_tag = sh;
+                                        while(last_tag){
+                                            if(!last_tag->next || strcasecmp(last_tag->next->tag, tag)){
+                                                goto FOUND;
+                                            }
+                                            last_tag = last_tag->next;
+                                        }
+                                    }
+                              }
+                              FOUND:;
+                              #if !1
                               current->entries[bucket]->last->next = calloc(1, sizeof(struct sh_entry));
                               current->entries[bucket]->last = current->entries[bucket]->last->next;
                               /*current->entries[bucket]->last->next = NULL;*/
@@ -101,14 +132,39 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                               /*printf("(%s) - ", tag);*/
                               tag = calloc(1, t_cap);
                               init_shash(current->entries[bucket]->last->subhash = malloc(sizeof(struct shash)));
+                              #endif
 
+                              if(!last_tag)last_tag = current->entries[bucket]->last;
+                              struct sh_entry* tmp = calloc(1, sizeof(struct sh_entry));
+                              tmp->tag = tag;
+                              tag = calloc(1, t_cap);
+                              tmp->next = last_tag->next;
+                              init_shash(tmp->subhash = malloc(sizeof(struct shash)));
+                              last_tag->next = tmp;
+                              if(last_tag == current->entries[bucket]->last)current->entries[bucket]->last = last_tag->next;
+
+                              /* ??? */
+                              pdata = &last_tag->next->data;
+                              last_tag->next->subhash->parent = current;
+                              current = last_tag->next->subhash;
                         }
 
-                        pdata = &current->entries[bucket]->last->data;
+                        #if !1
+                        ok... this last business is incorrect - in the next chunk of code too... bucket->last can be
+                        a completely different tag that just has the same second char
+                        above too... fuck. this is gonna be a big bugfix
+                        #endif
+                        /*pdata = &current->entries[bucket]->last->data;*/
+                        /*printf("setting pdata to %s\n", current->parent->entries[bucket]->last);*/
+                        #if !1
+                        pdata = &current->parent->entries[bucket]->last->data;
+                        #endif
+                        /*pdata = &current->parent- */
+                        /*pdata = current->parent->parent->entries[bucket]->*/
 
                         /* updating current */
-                        current->entries[bucket]->last->subhash->parent = current;
-                        current = current->entries[bucket]->last->subhash;
+                        /*current->entries[bucket]->last->subhash->parent = current;*/
+                        /*current = current->entries[bucket]->last->subhash;*/
                   }
             }
             else if(in_tag){
