@@ -16,7 +16,8 @@ static size_t write_mem(void* data, size_t sz, size_t mems, void* ptr){
             w->cap = w->cap*2 + _sz + 1;
             w->data = realloc(w->data, w->cap);
       }
-      memcpy(w->data+w->bytes+1, data, _sz);
+      /*memcpy(w->data+w->bytes+1, data, _sz);*/
+      memcpy(w->data+w->bytes, data, _sz);
       (w->data+w->bytes+1)[_sz] = 0;
       w->bytes += _sz;
       return _sz;
@@ -48,6 +49,7 @@ void init_wp(struct web_page* w){
  *honestly i think that a bunch of segments are being dl'd
  *when summed they're about the size of the proper page
  */
+
 void* dl_page_pth(void* dla_v){
       struct dl_arg* dla = (struct dl_arg*)dla_v;
       struct web_page w;
@@ -65,7 +67,7 @@ void* dl_page_pth(void* dla_v){
             if(ret != CURLE_OK){
                   if(dla->retries > tries++){
                         ++dla->h->retries_used;
-                        puts("contining'");
+                        puts("continuing");
                         continue;
                   }
                   dla->h->entries = NULL;
@@ -76,8 +78,13 @@ void* dl_page_pth(void* dla_v){
             break;
       }
 
-      printf("data: \"%s\" @ %zu, %zu", w.data, w.bytes, w.cap);
-      puts(w.data);
+      /*printf("data: \"%s\" @ %zu, %zu", w.data, w.bytes, w.cap);*/
+      /*puts(w.data);*/
+      /* why is there sometimes NULL chars? */
+      /*
+       * ++w.data;
+       * --w.bytes;
+      */
       taggem(dla->h, &w, 1, 1);
 
       return NULL;
