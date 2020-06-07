@@ -107,6 +107,18 @@ void recfp(struct shash* h){
       return;
 }
 
+struct web_page spoof_wp(char* fn, int bufsz){
+    char* buf = malloc(bufsz);
+    struct web_page ret;
+    ret.data = buf;
+    FILE* fp = fopen(fn, "r");
+    int ind = 0;
+    while((buf[ind++] = fgetc(fp)) != EOF);
+    ret.bytes = ind;
+    fclose(fp);
+    return ret;
+}
+
 void test(int a, char** b){
       /*FILE* fp = fopen("ex", "r");*/
       /*FILE* fp = fopen("fog", "r");*/
@@ -142,6 +154,24 @@ void test(int a, char** b){
       else printf("%s: %s\n", ee->tag, ee->data);
 }
 
+void teet(){
+    /*struct web_page w = spoof_wp("shor", 1000000);*/
+    struct web_page w = spoof_wp("f", 1000000);
+    /*struct web_page w = spoof_wp("new", 1000000);*/
+    struct shash h;
+    init_shash(&h);
+    taggem(&h, &w, 1, 1);
+    /*
+     * recfp(&h);
+     * return;
+    */
+
+    char* arg[] = {"html", "head", "title"};
+    struct sh_entry* ee = find_entry(&h, arg, 3);
+    if(!ee)puts("failed to find entry");
+    else printf("%s: %s\n", ee->tag, ee->data);
+}
+
 /* TODO:
  * write process_web_page(struct web_page* w, void* k)
  */
@@ -153,6 +183,11 @@ void test(int a, char** b){
  * .015 for one page is current benchmark
  */
 int main(int a, char** b){
+
+     /*
+      * teet();
+      * return 0;
+     */
       /*
        *test(a-1, b+1);
        *return 0;
@@ -177,7 +212,7 @@ int main(int a, char** b){
       printf("attempting to download %i pages\n", npages);
       struct timespec st, fin;
       clock_gettime(CLOCK_MONOTONIC, &st);
-      struct shash* w = dl_pages(pages, npages, 100);
+      struct shash* w = dl_pages(pages, npages, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el0 = fin.tv_sec - st.tv_sec;
