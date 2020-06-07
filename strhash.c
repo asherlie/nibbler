@@ -29,9 +29,9 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
       /*int bucket;*/
       /*struct sh_entry* e = h->entries[bucket];*/
       /* creating a spoof entry with h as subhash */
-      struct sh_entry E;
-      E.subhash = h;
-      struct sh_entry* e = &E;
+      /* TODO: free this up */
+      struct sh_entry* e = malloc(sizeof(struct sh_entry));
+      e->subhash = h;
       for(int i = 0; i < n; ++i){
             int bucket = path[i][1]%e->subhash->nbux;
             e = e->subhash->entries[bucket];
