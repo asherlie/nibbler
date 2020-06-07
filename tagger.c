@@ -152,7 +152,7 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                         #if !1
                         ok... this last business is incorrect - in the next chunk of code too... bucket->last can be
                         a completely different tag that just has the same second char
-                        above too... fuck. this is gonna be a big bugfix
+                        above too... this is gonna be a big bugfix
                         #endif
                         /*pdata = &current->entries[bucket]->last->data;*/
                         /*printf("setting pdata to %s\n", current->parent->entries[bucket]->last);*/
