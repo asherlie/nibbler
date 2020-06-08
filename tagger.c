@@ -27,7 +27,10 @@ _Bool self_closing(char* tag){
  * as of now they are NOT supported
  */ 
 /*we must be able to detect invalid html files*/
-void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase){
+/* if consec_matches,
+ * tags that are identical will be consecutive
+ */
+void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase, _Bool consec_matches){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
       char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata = NULL;
       _Bool in_tag = 0;
@@ -102,38 +105,24 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                               /*current->entries[bucket]->subhash->last = ;*/
                               /*current->entries[bucket]->subhash->*/
                         }
-                        /* otherwise, insert in back of LL */
-                        /*
-                         *ok don't put it in back - it really should go in the entry
-                         *with the proper tag IF IT EVEN EXISTS
-                         */
+                        /* otherwise, insert in back of LL if !consec_matches */
                         else{
                               /* abstract this */
-                              // how do we handle indices [0] :)
                               struct sh_entry* last_tag = NULL;
-                              for(struct sh_entry* sh = current->entries[bucket]; sh; sh = sh->next){
-                                    if(!strcasecmp(sh->tag, tag)){
-                                        last_tag = sh;
-                                        while(last_tag){
-                                            if(!last_tag->next || strcasecmp(last_tag->next->tag, tag)){
-                                                goto FOUND;
+                              if(consec_matches){
+                                  for(struct sh_entry* sh = current->entries[bucket]; sh; sh = sh->next){
+                                        if(!strcasecmp(sh->tag, tag)){
+                                            last_tag = sh;
+                                            while(last_tag){
+                                                if(!last_tag->next || strcasecmp(last_tag->next->tag, tag)){
+                                                    goto FOUND;
+                                                }
+                                                last_tag = last_tag->next;
                                             }
-                                            last_tag = last_tag->next;
                                         }
-                                    }
+                                  }
                               }
                               FOUND:;
-                              #if !1
-                              current->entries[bucket]->last->next = calloc(1, sizeof(struct sh_entry));
-                              current->entries[bucket]->last = current->entries[bucket]->last->next;
-                              /*current->entries[bucket]->last->next = NULL;*/
-                              /*memcpy(current->entries[bucket]->last->tag, tag, t_ind);*/
-                              current->entries[bucket]->last->tag = tag;
-                              /*printf("(%s) - ", tag);*/
-                              tag = calloc(1, t_cap);
-                              init_shash(current->entries[bucket]->last->subhash = malloc(sizeof(struct shash)));
-                              #endif
-
                               if(!last_tag)last_tag = current->entries[bucket]->last;
                               struct sh_entry* tmp = calloc(1, sizeof(struct sh_entry));
                               tmp->tag = tag;
@@ -149,22 +138,7 @@ void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce
                               current = last_tag->next->subhash;
                         }
 
-                        #if !1
-                        ok... this last business is incorrect - in the next chunk of code too... bucket->last can be
-                        a completely different tag that just has the same second char
-                        above too... this is gonna be a big bugfix
-                        #endif
-                        /*pdata = &current->entries[bucket]->last->data;*/
-                        /*printf("setting pdata to %s\n", current->parent->entries[bucket]->last);*/
-                        #if !1
-                        pdata = &current->parent->entries[bucket]->last->data;
-                        #endif
-                        /*pdata = &current->parent- */
-                        /*pdata = current->parent->parent->entries[bucket]->*/
-
-                        /* updating current */
-                        /*current->entries[bucket]->last->subhash->parent = current;*/
-                        /*current = current->entries[bucket]->last->subhash;*/
+                        /* TODO: update current and pdata here with one pointer between both options above */
                   }
             }
             else if(in_tag){
