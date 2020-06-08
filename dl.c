@@ -85,7 +85,7 @@ void* dl_page_pth(void* dla_v){
        * ++w.data;
        * --w.bytes;
       */
-      taggem(dla->h, &w, 1, 1);
+      taggem(dla->h, &w, 1, 1, 0);
 
       return NULL;
 }

@@ -135,7 +135,7 @@ void test(int a, char** b){
       struct shash h;
       init_shash(&h);
 
-      taggem(&h, &w, 1, 1);
+      taggem(&h, &w, 1, 1, 0);
 
       recfp(&h);
 
@@ -156,7 +156,7 @@ void teet(){
     /*struct web_page w = spoof_wp("new", 1000000);*/
     struct shash h;
     init_shash(&h);
-    taggem(&h, &w, 1, 1);
+    taggem(&h, &w, 1, 1, 0);
     /*
      * recfp(&h);
      * return;
