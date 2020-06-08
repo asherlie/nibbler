@@ -26,12 +26,9 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
        *int bucket = (*path)[1]%h->nbux;
        *oops - on the first entry we don't do a strcmp
        */
-      /*int bucket;*/
-      /*struct sh_entry* e = h->entries[bucket];*/
-      /* creating a spoof entry with h as subhash */
-      /* TODO: free this up */
-      struct sh_entry* e = malloc(sizeof(struct sh_entry));
-      e->subhash = h;
+      struct sh_entry E, * e;
+      E.subhash = h;
+      e = &E;
       for(int i = 0; i < n; ++i){
             int bucket = path[i][1]%e->subhash->nbux;
             e = e->subhash->entries[bucket];
@@ -45,6 +42,13 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
 
       int nfound = 0;
 
+      /* this is unecessary - we can assume that entries with the same
+       * tag are consecutive
+       * otherwise, we should go back to previous implementation
+       * TODO: revert to cheaper insertion
+       * we're not going to be parsing moth paths anyway,
+       * we can take the hit in find_entry() performance
+       */
       while(e && nfound < index){
             if(!strcasecmp(e->tag, path[n-1]))++nfound;
             e = e->next;
