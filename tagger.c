@@ -30,7 +30,7 @@ _Bool self_closing(char* tag){
 /* if consec_matches,
  * tags that are identical will be consecutive
  */
-void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase, _Bool consec_matches){
+void tag_wp(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase, _Bool consec_matches){
       int t_ind = 0, d_ind = 0, t_cap = 100, d_cap = 500;
       char* tag = calloc(1, t_cap), * data = calloc(1, d_cap), ** pdata = NULL;
       _Bool in_tag = 0;

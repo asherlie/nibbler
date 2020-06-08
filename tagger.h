@@ -6,5 +6,5 @@
 struct web_page;
 
 /* should return 1 on success */
-void taggem(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase, _Bool consec_matches);
+void tag_wp(struct shash* h, struct web_page* w, _Bool strip_tags, _Bool enforce_lowcase, _Bool consec_matches);
 #endif
