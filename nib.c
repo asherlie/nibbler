@@ -16,17 +16,13 @@ struct index_tracker{
       int index, index_pos;
 };
 
-/*void _recfp(struct sh_entry* e, char** path, int depth, int index, int index_pos){*/
 void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it, int it_sz){
       if(!e)return;
       int _depth = depth, _it_sz = it_sz;
-      /*_Bool ident = !strcasecmp(e->nex);*/
       path[_depth++] = e->tag;
       if(e->next){
             _Bool ident = /*!e->data &&*/ !strcasecmp(e->next->tag, path[_depth-1]);
-            /*_recfp(e->next, path, _depth-ident, index+ident, index_pos);*/
             if(ident){
-                  /*it[_it_sz].index = it[_it_sz-1].index;*/
                   /* increment current index if we're doing some nice iteration */
                   ++it[_it_sz-1].index;
                   _recfp(e->next, path, _depth-ident, it, _it_sz);
