@@ -40,7 +40,7 @@ static size_t brite_mem(void* data, size_t sz, size_t mems, void* ptr){
 
 void init_wp(struct web_page* w){
       w->bytes = 0;
-      w->cap = 500;
+      w->cap = 500000;
       w->data = calloc(1, w->cap);
 }
 
@@ -85,14 +85,29 @@ void* dl_page_pth(void* dla_v){
        * ++w.data;
        * --w.bytes;
       */
+      /* TODO: determine how long this line takes to run with consec_matches and without */
+      struct timespec st, fin;
+      clock_gettime(CLOCK_MONOTONIC, &st);
       tag_wp(dla->h, &w, 1, 1, 0);
+      clock_gettime(CLOCK_MONOTONIC, &fin);
+      double el = fin.tv_sec - st.tv_sec;
+      el += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
+      printf("tagging took %f seconds\n", el);
 
       return NULL;
 }
 
+/* TODO: limit number of threads used for very large numbers of downloads */
 struct shash* dl_pages(char** urls, int npages, int retries){
+      /*
+       * if(npages > THREAD_MAX){
+       *       return combined;
+       * }
+      */
+      /* TODO: this should be on the heap */
       struct dl_arg dla[npages];
       struct shash* ret = malloc(sizeof(struct shash)*npages);
+      /* TODO: this should be on the heap */
       pthread_t pth[npages];
       for(int i = 0; i < npages; ++i){
             dla[i].url = urls[i];
