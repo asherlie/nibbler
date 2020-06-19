@@ -26,10 +26,12 @@ struct sh_entry* grab_singlepass(struct shash* h, char** path, int n, int index)
        *int bucket = (*path)[1]%h->nbux;
        *oops - on the first entry we don't do a strcmp
        */
-      struct sh_entry E, * e;
-      E.subhash = h;
-      e = &E;
-      for(int i = 0; i < n; ++i){
+      struct sh_entry* e;
+
+      if(!n)return NULL;
+      e = h->entries[path[0][1]%h->nbux];
+
+      for(int i = 1; i < n; ++i){
             int bucket = path[i][1]%e->subhash->nbux;
             e = e->subhash->entries[bucket];
             for(; e; e = e->next){
