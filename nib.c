@@ -129,11 +129,15 @@ struct web_page spoof_wp(char* fn, int bufsz){
     return ret;
 }
 
-struct shash* spoof_shash(char* fn){
+struct shash* spoof_shash(char* fn, double* elapsed){
       struct web_page wp = spoof_wp(fn, 1000000);
       struct shash* w = malloc(sizeof(struct shash));
       init_shash(w);
+      struct timespec st, fin;
+      clock_gettime(CLOCK_MONOTONIC, &st);
       tag_wp(w, &wp, 1, 1, 0);
+      clock_gettime(CLOCK_MONOTONIC, &fin);
+      if(elapsed)*elapsed = fin.tv_sec-st.tv_sec;
       return w;
 }
 
@@ -256,7 +260,7 @@ int main(int a, char** b){
        *       
        * }
       */
-      struct shash* w = spoof_shash(*pages);
+      struct shash* w = spoof_shash(*pages, NULL);
 
       #endif
 
