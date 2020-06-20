@@ -6,8 +6,6 @@
 #include "dl.h"
 #include "strhash.h"
 
-#define DEBUG
-
 char* strip_ws(char* str){
       char* ret;
       for(ret = str; *ret && (*ret == '\n' || *ret == ' '); ++ret);
@@ -137,7 +135,10 @@ struct shash* spoof_shash(char* fn, double* elapsed){
       clock_gettime(CLOCK_MONOTONIC, &st);
       tag_wp(w, &wp, 1, 1, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
-      if(elapsed)*elapsed = (fin.tv_nsec-st.tv_nsec)/1000000000.0;
+      if(elapsed){
+            *elapsed = fin.tv_sec-st.tv_sec;
+            *elapsed += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
+      }
       return w;
 }
 
@@ -242,9 +243,8 @@ int main(int a, char** b){
       struct shash* w = dl_pages(pages, npages, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
-      /*double el0 = fin.tv_sec - st.tv_sec;*/
-      el0 = (fin.tv_nsec-st.tv_nsec)/1000000000.0;
-      /*el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;*/
+      el0 = fin.tv_sec - st.tv_sec;
+      el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
       int tries = 0, failures = 0;
       for(int i = 0; i < npages; ++i){

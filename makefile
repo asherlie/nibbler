@@ -12,5 +12,9 @@ tagger.o: tagger.c tagger.h dl.o strhash.o
 nib: nib.c strhash.o dl.o tagger.o
 
 .PHONY:
+db: nib.c strhash.o dl.o tagger.o
+	gcc nib.c strhash.o dl.o tagger.o -DDEBUG -o nib
+
+.PHONY:
 clean:
 	rm -f nib *.o
