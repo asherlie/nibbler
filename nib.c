@@ -221,6 +221,9 @@ int main(int a, char** b){
       for(int i = 0; i < npages; ++i)
             pages[i] = b[1];
 
+      /* used for timing in both debug and non debug mode */
+      struct timespec st, fin;
+
       #ifndef DEBUG
       curl_global_init(CURL_GLOBAL_ALL);
 
@@ -230,7 +233,6 @@ int main(int a, char** b){
        * cpu time at once
       */
       printf("attempting to download %i pages\n", npages);
-      struct timespec st, fin;
       clock_gettime(CLOCK_MONOTONIC, &st);
       struct shash* w = dl_pages(pages, npages, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
@@ -263,23 +265,25 @@ int main(int a, char** b){
             return 0;
       }
 
-      #ifndef DEBUG
       clock_gettime(CLOCK_MONOTONIC, &st);
-      #endif
 
       int found = 0;
       struct sh_entry* e[npages];
       for(int i = 0; i < npages; ++i)
             found += (_Bool)(e[i] = find_entry(w+i, b+2, a-2));
-      #ifndef DEBUG
+
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;
       el1 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
       printf("found: %i/%i\n", found, npages);
+      #ifdef DEBUG
+      printf("ind_shash took %lf\n", el1);
+      #else
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
       #endif
+
       for(int i = 0; i < npages; ++i){
             printf("%i: ", i);
             if(!e[i])puts("not found");
