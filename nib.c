@@ -137,7 +137,7 @@ struct shash* spoof_shash(char* fn, double* elapsed){
       clock_gettime(CLOCK_MONOTONIC, &st);
       tag_wp(w, &wp, 1, 1, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
-      if(elapsed)*elapsed = fin.tv_sec-st.tv_sec;
+      if(elapsed)*elapsed = (fin.tv_nsec-st.tv_nsec)/1000000000.0;
       return w;
 }
 
