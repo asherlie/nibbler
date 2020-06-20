@@ -6,6 +6,8 @@
 #include "dl.h"
 #include "strhash.h"
 
+#define DEBUG
+
 char* strip_ws(char* str){
       char* ret;
       for(ret = str; *ret && (*ret == '\n' || *ret == ' '); ++ret);
@@ -18,6 +20,7 @@ struct index_tracker{
 
 void _recfp(struct sh_entry* e, char** path, int depth, struct index_tracker* it, int it_sz){
       if(!e)return;
+      if(!it_sz)return;
       int _depth = depth, _it_sz = it_sz;
       path[_depth++] = e->tag;
       if(e->next){
@@ -99,9 +102,20 @@ void recfp(struct shash* h){
       E.next = NULL;
       char* buf[10000];
       struct index_tracker it[10000] = {0};
-      _recfp(&E, buf, 0, it, 0);
+      _recfp(&E, buf, 0, it, 1);
       return;
 }
+
+/*
+ * we print every tag in a hash and its data
+ */
+/*
+ * void print_paths(struct shash* h){
+ *       for(int i = 0; i < h->nbux; ++i){
+ *             printf("%s: %s\n", h->entries[i]->tag, h->entries[i]->);
+ *       }
+ * }
+*/
 
 struct web_page spoof_wp(char* fn, int bufsz){
     char* buf = malloc(bufsz);
@@ -113,6 +127,14 @@ struct web_page spoof_wp(char* fn, int bufsz){
     ret.bytes = ind;
     fclose(fp);
     return ret;
+}
+
+struct shash* spoof_shash(char* fn){
+      struct web_page wp = spoof_wp(fn, 1000000);
+      struct shash* w = malloc(sizeof(struct shash));
+      init_shash(w);
+      tag_wp(w, &wp, 1, 1, 0);
+      return w;
 }
 
 void test(int a, char** b){
@@ -191,16 +213,18 @@ int main(int a, char** b){
 
       if(a < 2)return EXIT_FAILURE;
 
-      curl_global_init(CURL_GLOBAL_ALL);
-
       int npages = 1;
 
       char* pages[npages];
       memset(pages, 0, npages);
 
-      /*char ex[] = "example.com";*/
       for(int i = 0; i < npages; ++i)
             pages[i] = b[1];
+
+      #ifndef DEBUG
+      curl_global_init(CURL_GLOBAL_ALL);
+
+      /*char ex[] = "example.com";*/
       /*
        * use of clock() was giving inaccurate timings due to multiple threads using more
        * cpu time at once
@@ -222,18 +246,32 @@ int main(int a, char** b){
 
       printf("dl and tagging took %lf with %i retries\n", el0, tries);
       printf("%i/%i malformed pages\n", failures, npages);
+      #else
+
+      /*
+       * struct shash W[npages];
+       * for(int i = 0; i < npages; ++i){
+       *       
+       * }
+      */
+      struct shash* w = spoof_shash(*pages);
+
+      #endif
 
       if(a < 3){
             recfp(w);
             return 0;
       }
 
+      #ifndef DEBUG
       clock_gettime(CLOCK_MONOTONIC, &st);
+      #endif
 
       int found = 0;
       struct sh_entry* e[npages];
       for(int i = 0; i < npages; ++i)
             found += (_Bool)(e[i] = find_entry(w+i, b+2, a-2));
+      #ifndef DEBUG
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
       double el1 = fin.tv_sec - st.tv_sec;
@@ -241,6 +279,7 @@ int main(int a, char** b){
 
       printf("found: %i/%i\n", found, npages);
       printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
+      #endif
       for(int i = 0; i < npages; ++i){
             printf("%i: ", i);
             if(!e[i])puts("not found");
@@ -256,7 +295,9 @@ int main(int a, char** b){
        *else printf("%s: \"%s\"\n", (*e)->tag, (*e)->data);
        */
 
+      #ifndef DEBUG
       curl_global_cleanup();
+      #endif
 
       return 0;
 }
