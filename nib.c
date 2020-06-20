@@ -228,6 +228,7 @@ int main(int a, char** b){
       /* used for timing in both debug and non debug mode */
       struct timespec st, fin;
 
+      double el0;
       #ifndef DEBUG
       curl_global_init(CURL_GLOBAL_ALL);
 
@@ -241,8 +242,9 @@ int main(int a, char** b){
       struct shash* w = dl_pages(pages, npages, 0);
       clock_gettime(CLOCK_MONOTONIC, &fin);
 
-      double el0 = fin.tv_sec - st.tv_sec;
-      el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
+      /*double el0 = fin.tv_sec - st.tv_sec;*/
+      el0 = (fin.tv_nsec-st.tv_nsec)/1000000000.0;
+      /*el0 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;*/
 
       int tries = 0, failures = 0;
       for(int i = 0; i < npages; ++i){
@@ -260,7 +262,7 @@ int main(int a, char** b){
        *       
        * }
       */
-      struct shash* w = spoof_shash(*pages, NULL);
+      struct shash* w = spoof_shash(*pages, &el0);
 
       #endif
 
@@ -282,11 +284,7 @@ int main(int a, char** b){
       el1 += (fin.tv_nsec-st.tv_nsec)/1000000000.0;
 
       printf("found: %i/%i\n", found, npages);
-      #ifdef DEBUG
-      printf("ind_shash took %lf\n", el1);
-      #else
-      printf("ind_shash took %lf\nall computation took %lf seconds\n", el1, el0+el1);
-      #endif
+      printf("ind_shash took %lf\ntagging took %lf seconds\n", el1, el0);
 
       for(int i = 0; i < npages; ++i){
             printf("%i: ", i);
